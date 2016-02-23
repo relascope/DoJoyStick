@@ -1,3 +1,18 @@
+// TODO Undo/Redo
+// TODO Different Buttons
+
+// TODO for fun test with mousebuttons or keyboard...
+
+// TODO NDEBUG ?? means NOT no debug ??
+// http://stuffusedinworking.blogspot.co.at/2011/01/useage-of-ndebug-macros.html
+
+
+#define DEBUG_OUTPUT
+
+#include "jsevent.h"
+
+#include <stdio.h>
+#include <stdlib.h>
 
 
 // Record Tap footswitch once.
@@ -12,157 +27,178 @@
 //
 //
 
-#include <stdlib.h>
-#include <stdio.h>
 
-#include <fcntl.h>
-#include <linux/joystick.h>
-#include <sys/ioctl.h>
-#include <unistd.h>
+// SOOPERLOOPER OSC commands (some of them)
+// http://essej.net/sooperlooper/doc_osc.html
 
-#include <time.h>
-#include <math.h>
 
-inline long millis() {
-  long ms;
-  struct timespec spec;
-  clock_gettime(CLOCK_MONOTONIC, &spec);
-  ms = round(spec.tv_nsec / 1.0e6);
-  return ms;
-}
+//typedef enum {
+//  RECORD = 0,
+//  PLAYBACK,
+//  UNDO_REDO,
+//  STOP,
+//  STOP_DELETE,
+//  RESUME,
+//  DELETE
+//} COMMAND;
+
+//const char *COMMAND_NAMES[] = {"RECORD",      "PLAYBACK", "UNDO_REDO", "STOP",
+//                               "STOP_DELETE", "RESUME",   "DELETE"};
+
+//void printCommand(COMMAND c) { printf("%s\n", COMMAND_NAMES[c]); }
+
+
+//const char *OSC_COMMANDS[] = {
+//    "oscsend osc.udp://localhost:9951 /sl/-1/hit s record",
+
+
+//};
+
 
 typedef enum {
-  RECORD = 0,
-  PLAYBACK,
-  UNDO_REDO,
-  STOP,
-  STOP_DELETE,
-  RESUME,
-  DELETE
-} COMMAND;
+    JUST_STARTED = 0,
+    STOPPED,
+    RECORDING,
+    OVERDUBBING,
+    PLAYBACK
+} LOOPER_STATUS;
 
-const char *COMMAND_NAMES[] = {"RECORD",      "PLAYBACK", "UNDO_REDO", "STOP",
-                               "STOP_DELETE", "RESUME",   "DELETE"};
+const char *LOOPER_STATUS_NAMES[] = {"JUST_STARTED", "STOPPED", "RECORDING", "OVERDUBBING", "PLAYBACK"};
 
-void printCommand(COMMAND c) { printf("%s\n", COMMAND_NAMES[c]); }
-
-typedef enum { SINGLE = 0, DOUBLE, HOLD, DOUBLE_HOLD, UNDEF } CLICK_TYPE;
-
-const char *CLICK_TYPE_NAMES[] = {"SINGLE", "DOUBLE", "HOLD", "DOUBLE_HOLD",
-                                  "UNDEF"};
-
-void printType(CLICK_TYPE t) { printf("%s\n", CLICK_TYPE_NAMES[t]); }
+void printLooperStatus(LOOPER_STATUS ls) { printf("%s\n", LOOPER_STATUS_NAMES[ls]); }
 
 
-
-void ditto_event(CLICK_TYPE type) {
-    switch (type) {
-	case HOLD:
-	    system("/home/dojoy/dev/linux/togglejack.sh");
-	    break;
-	case SINGLE:
-	    break;
-	case DOUBLE_HOLD:
-	    break;
-	case DOUBLE:
-	    break;
-    }
-}
+LOOPER_STATUS loopStatus = JUST_STARTED;
 
 
+void dittoHandler(CLICK_TYPE clickType) {
 
+#ifndef NDEBUG
+    printf("_____EVENT_____\n");
+    printLooperStatus(loopStatus);
+#endif
 
-
-
-
-
-int joy_fd;
-int open_joystick() {
-  char name[128] = "Undefined";
-  int buttons;
-
-  if ((joy_fd = open("/dev/input/js0", O_RDONLY)) < 0) {
-    fprintf(stderr, "Unable to open device ");
-    perror("/dev/input/js0");
-    exit(-1);
-  }
-
-  ioctl(joy_fd, JSIOCGBUTTONS, &buttons);
-  ioctl(joy_fd, JSIOCGNAME(128), name);
-
-  printf("Joystick %s with %i buttons\n", name, buttons);
-}
-
-void jsdiag(struct js_event js) {
-  printf("time: %i\n", js.time);
-  printf("value: %i\n", js.value);
-  printf("type: %i\n", js.type);
-  printf("number: %i\n", js.number);
-}
-
-int holdTime = 700;
-int dblTime = 250;
-
-/** TODO Button Numbers!
- * gets events from JoyStick like the Ditto Looper
- * */
-void ditto_loop() {
-  struct js_event js;
-
-  printf("In loop... Ctrl-C to exit.\n");
-
-  CLICK_TYPE lastType = UNDEF;
-
-  long lastTime = 0;
-  bool lastDown = false;
-
-  long lastDownTime = 0;
-
-  bool isDouble = false;
-
-  while (1) {
-    if (read(joy_fd, &js, sizeof(struct js_event)) != sizeof(struct js_event)) {
-      perror("Error reading ");
-      exit(-1);
-    }
-
-//    jsdiag(js);
-
-    if (js.type == JS_EVENT_BUTTON) {
-      long curTime = js.time;
-      bool curDown = js.value == 1;
-      bool isHold = false;
-
-      if (!lastDown && curDown) {
-        if ((curTime - lastDownTime) < dblTime) {
-          isDouble = true;
+    switch (loopStatus) {
+    case JUST_STARTED:
+        switch (clickType) {
+            case SINGLE:
+                system("oscsend osc.udp://localhost:9951 /sl/-1/hit s record");
+                loopStatus = RECORDING;
+                break;
+            case HOLD:
+                break;
+            case DOUBLE_HOLD:
+                break;
+            case DOUBLE:
+            // NOTHING
+                break;
+            default:
+                fprintf(stderr, "CLICKTYPE NOT DEFINED");
+                printType(clickType);
+                break;
         }
-      }
-
-      if (lastDown && !curDown) {
-        if ((curTime - lastTime) > holdTime) {
-          isHold = true;
+        break;
+    case RECORDING:
+        switch (clickType) {
+            case SINGLE:
+                system("oscsend osc.udp://localhost:9951 /sl/-1/hit s record");
+                loopStatus = PLAYBACK;
+                break;
+            case HOLD:
+                break;
+            case DOUBLE_HOLD:
+                break;
+            case DOUBLE:
+//                system("oscsend osc.udp://localhost:9951 /sl/-1/hit s record"); // done by SINGLE
+//                system("oscsend osc.udp://localhost:9951 /sl/-1/hit s mute_on");
+//                loopStatus = STOPPED;
+                break;
+            default:
+                fprintf(stderr, "CLICKTYPE NOT DEFINED");
+                printType(clickType);
+                break;
         }
+        break;
 
-        CLICK_TYPE curType = (CLICK_TYPE)(2 * isHold + 1 * isDouble);
+    case OVERDUBBING:
+        switch (clickType) {
+            case SINGLE:
+                system("oscsend osc.udp://localhost:9951 /sl/-1/hit s overdub");
+                loopStatus = PLAYBACK;
+                break;
+            case HOLD:
+                break;
+            case DOUBLE_HOLD:
+                break;
+            case DOUBLE:
+                break;
+            default:
+                fprintf(stderr, "CLICKTYPE NOT DEFINED");
+                printType(clickType);
+                break;
+        }
+        break;
 
-        isDouble = false;
-
-	// TODO Add handler
-        printType(curType);
-	ditto_event(curType);
-        lastDownTime = curTime;
-      }
-
-      lastTime = curTime;
-      lastDown = curDown;
+    case STOPPED:
+        switch (clickType) {
+            case SINGLE:
+                system("oscsend osc.udp://localhost:9951 /sl/-1/hit s mute_off");
+                system("oscsend osc.udp://localhost:9951 /sl/-1/hit s trigger");
+                // TODO what does ditto do? record/playback
+                loopStatus = PLAYBACK;
+                break;
+            case HOLD:
+                break;
+            case DOUBLE_HOLD:
+                break;
+            case DOUBLE:
+                break;
+            default:
+                fprintf(stderr, "CLICKTYPE NOT DEFINED");
+                printType(clickType);
+                break;
+        }
+        break;
+    case PLAYBACK:
+        switch (clickType) {
+            case SINGLE:
+//                system("oscsend osc.udp://localhost:9951 /sl/-1/hit s overdub");
+//                loopStatus = OVERDUBBING;
+                break;
+            case HOLD:
+                break;
+            case DOUBLE_HOLD:
+                break;
+            case DOUBLE:
+                system("oscsend osc.udp://localhost:9951 /sl/-1/hit s mute_on");
+                loopStatus = STOPPED;
+                break;
+            default:
+                fprintf(stderr, "CLICKTYPE NOT DEFINED");
+                printType(clickType);
+                break;
+        }
+        break;
+    default:
+        fprintf(stderr, "LOOPER_STATUS NOT DEFINED");
+        printLooperStatus(loopStatus);
     }
-  }
+
+#ifndef NDEBUG
+    printLooperStatus(loopStatus);
+#endif
 }
 
 int main(int argc, char *argv[]) {
-  open_joystick();
 
-  ditto_loop();
-  return 0;
+#ifndef NDEBUG
+    printf("Clearing loop to add a single one. Compile with -DNDEBUG to avoid debugging behaviour! \n");
+    system("oscsend osc.udp://localhost:9951 /loop_del i -1");
+    system("oscsend osc.udp://localhost:9951 /loop_add ii 2 0");
+#endif
+
+    setEventHandler(&dittoHandler);
+
+    startJoystickEvents();
+    return 0;
 }
