@@ -11,6 +11,8 @@
 
 #include "jsevent.h"
 
+//#include "mouseevent.c"
+
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -77,6 +79,19 @@ void dittoHandler(CLICK_TYPE clickType) {
     printf("_____EVENT_____\n");
     printLooperStatus(loopStatus);
 #endif
+
+
+    if (clickType == DOUBLE) {
+        system("oscsend osc.udp://localhost:9951 /sl/-1/hit s mute_on");
+        loopStatus = STOPPED;
+        goto dittoHandlerEnd;
+    }
+
+    if (clickType == DOUBLE_HOLD) {
+        system("oscsend osc.udp://localhost:9951 /sl/-1/hit s mute_on");
+        loopStatus = JUST_STARTED;
+    }
+
 
     switch (loopStatus) {
     case JUST_STARTED:
@@ -184,6 +199,7 @@ void dittoHandler(CLICK_TYPE clickType) {
         printLooperStatus(loopStatus);
     }
 
+    dittoHandlerEnd:
 #ifndef NDEBUG
     printLooperStatus(loopStatus);
 #endif
