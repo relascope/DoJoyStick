@@ -73,7 +73,7 @@ void printLooperStatus(LOOPER_STATUS ls) { printf("%s\n", LOOPER_STATUS_NAMES[ls
 LOOPER_STATUS loopStatus = JUST_STARTED;
 
 
-void dittoHandler(CLICK_TYPE clickType) {
+void dittoHandler(JsEvents::CLICK_TYPE clickType) {
 
 #ifndef NDEBUG
     printf("_____EVENT_____\n");
@@ -81,13 +81,13 @@ void dittoHandler(CLICK_TYPE clickType) {
 #endif
 
 
-    if (clickType == DOUBLE) {
+	if (clickType == JsEvents::DOUBLE) {
         system("oscsend osc.udp://localhost:9951 /sl/-1/hit s mute_on");
         loopStatus = STOPPED;
         goto dittoHandlerEnd;
     }
 
-    if (clickType == DOUBLE_HOLD) {
+	if (clickType == JsEvents::DOUBLE_HOLD) {
         system("oscsend osc.udp://localhost:9951 /sl/-1/hit s mute_on");
         loopStatus = JUST_STARTED;
     }
@@ -96,101 +96,101 @@ void dittoHandler(CLICK_TYPE clickType) {
     switch (loopStatus) {
     case JUST_STARTED:
         switch (clickType) {
-            case SINGLE:
+			case JsEvents::SINGLE:
                 system("oscsend osc.udp://localhost:9951 /sl/-1/hit s record");
                 loopStatus = RECORDING;
                 break;
-            case HOLD:
+			case JsEvents::HOLD:
                 break;
-            case DOUBLE_HOLD:
+			case JsEvents::DOUBLE_HOLD:
                 break;
-            case DOUBLE:
+			case JsEvents::DOUBLE:
             // NOTHING
                 break;
             default:
                 fprintf(stderr, "CLICKTYPE NOT DEFINED");
-                printType(clickType);
+				JsEvents::printType(clickType);
                 break;
         }
         break;
     case RECORDING:
         switch (clickType) {
-            case SINGLE:
+			case JsEvents::SINGLE:
                 system("oscsend osc.udp://localhost:9951 /sl/-1/hit s record");
                 loopStatus = PLAYBACK;
                 break;
-            case HOLD:
+			case JsEvents::HOLD:
                 break;
-            case DOUBLE_HOLD:
+			case JsEvents::DOUBLE_HOLD:
                 break;
-            case DOUBLE:
+			case JsEvents::DOUBLE:
 //                system("oscsend osc.udp://localhost:9951 /sl/-1/hit s record"); // done by SINGLE
 //                system("oscsend osc.udp://localhost:9951 /sl/-1/hit s mute_on");
 //                loopStatus = STOPPED;
                 break;
             default:
                 fprintf(stderr, "CLICKTYPE NOT DEFINED");
-                printType(clickType);
+				JsEvents::printType(clickType);
                 break;
         }
         break;
 
     case OVERDUBBING:
         switch (clickType) {
-            case SINGLE:
+			case JsEvents::SINGLE:
                 system("oscsend osc.udp://localhost:9951 /sl/-1/hit s overdub");
                 loopStatus = PLAYBACK;
                 break;
-            case HOLD:
+			case JsEvents::HOLD:
                 break;
-            case DOUBLE_HOLD:
+			case JsEvents::DOUBLE_HOLD:
                 break;
-            case DOUBLE:
+			case JsEvents::DOUBLE:
                 break;
             default:
                 fprintf(stderr, "CLICKTYPE NOT DEFINED");
-                printType(clickType);
+				JsEvents::printType(clickType);
                 break;
         }
         break;
 
     case STOPPED:
         switch (clickType) {
-            case SINGLE:
+			case JsEvents::SINGLE:
                 system("oscsend osc.udp://localhost:9951 /sl/-1/hit s mute_off");
                 system("oscsend osc.udp://localhost:9951 /sl/-1/hit s trigger");
                 // TODO what does ditto do? record/playback
                 loopStatus = PLAYBACK;
                 break;
-            case HOLD:
+			case JsEvents::HOLD:
                 break;
-            case DOUBLE_HOLD:
+			case JsEvents::DOUBLE_HOLD:
                 break;
-            case DOUBLE:
+			case JsEvents::DOUBLE:
                 break;
             default:
                 fprintf(stderr, "CLICKTYPE NOT DEFINED");
-                printType(clickType);
+				JsEvents::printType(clickType);
                 break;
         }
         break;
     case PLAYBACK:
         switch (clickType) {
-            case SINGLE:
+			case JsEvents::SINGLE:
 //                system("oscsend osc.udp://localhost:9951 /sl/-1/hit s overdub");
 //                loopStatus = OVERDUBBING;
                 break;
-            case HOLD:
+			case JsEvents::HOLD:
                 break;
-            case DOUBLE_HOLD:
+			case JsEvents::DOUBLE_HOLD:
                 break;
-            case DOUBLE:
+			case JsEvents::DOUBLE:
                 system("oscsend osc.udp://localhost:9951 /sl/-1/hit s mute_on");
                 loopStatus = STOPPED;
                 break;
             default:
                 fprintf(stderr, "CLICKTYPE NOT DEFINED");
-                printType(clickType);
+				JsEvents::printType(clickType);
                 break;
         }
         break;
@@ -208,13 +208,15 @@ void dittoHandler(CLICK_TYPE clickType) {
 int main(int argc, char *argv[]) {
 
 #ifndef NDEBUG
-    printf("Clearing loop to add a single one. Compile with -DNDEBUG to avoid debugging behaviour! \n");
-    system("oscsend osc.udp://localhost:9951 /loop_del i -1");
-    system("oscsend osc.udp://localhost:9951 /loop_add ii 2 0");
+	printf("Clearing loops to add a single one. Compile with -DNDEBUG to avoid debugging behaviour! \n");
+	system("oscsend osc.udp://localhost:9951 /loop_del i -1");
+	system("oscsend osc.udp://localhost:9951 /loop_add ii 2 0");
 #endif
 
-    setEventHandler(&dittoHandler);
+	JsEvents events;
 
-    startJoystickEvents();
+	events.setEventHandler(&dittoHandler);
+	events.startJoystickEvents();
+
     return 0;
 }

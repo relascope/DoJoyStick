@@ -1,14 +1,31 @@
 #ifndef JSEVENT_H
 #define JSEVENT_H
 
-typedef enum { SINGLE = 0, DOUBLE, HOLD, DOUBLE_HOLD, UNDEF } CLICK_TYPE;
+struct js_event;
 
-typedef void (*clickHandler)(CLICK_TYPE t);
+class JsEvents {
+public:
+	typedef enum { SINGLE = 0, DOUBLE, HOLD, DOUBLE_HOLD, UNDEF } CLICK_TYPE;
 
-void startJoystickEvents();
+	typedef void (*clickHandler)(CLICK_TYPE t);
 
-void setEventHandler(clickHandler handler);
+	void startJoystickEvents();
 
-void printType(CLICK_TYPE t);
+	void setEventHandler(clickHandler handler);
+
+	static void printType(CLICK_TYPE t);
+
+private:
+
+	// TODO allow to set parameters
+	int holdTime = 700;
+	int dblTime = 250;
+	const char *deviceName = "/dev/input/js0";
+	clickHandler handler = 0;
+
+	int open_joystick();
+	void jsdiag(js_event js);
+	void js_event_loop();
+};
 
 #endif

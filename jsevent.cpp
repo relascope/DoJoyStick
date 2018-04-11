@@ -9,26 +9,18 @@
 #include "jsevent.h"
 
 
-
-
-int holdTime = 700;
-int dblTime = 250;
-
-const char *deviceName = "/dev/input/js0";
-
-clickHandler handler = 0;
-
-void setEventHandler(clickHandler _handler) {
+void JsEvents::setEventHandler(clickHandler _handler) {
     handler = _handler;
 }
 
 const char *CLICK_TYPE_NAMES[] = {"SINGLE", "DOUBLE", "HOLD", "DOUBLE_HOLD",
                                   "UNDEF"};
-void printType(CLICK_TYPE t) { printf("%s\n", CLICK_TYPE_NAMES[t]); }
+
+void JsEvents::printType(CLICK_TYPE t) { printf("%s\n", CLICK_TYPE_NAMES[t]); }
 
 int joy_fd;
 
-int open_joystick() {
+int JsEvents::open_joystick() {
   char name[128] = "Undefined";
   int buttons;
 
@@ -44,7 +36,7 @@ int open_joystick() {
   printf("Joystick %s with %i buttons\n", name, buttons);
 }
 
-void jsdiag(struct js_event js) {
+void JsEvents::jsdiag(struct js_event js) {
   printf("time: %i\n", js.time);
   printf("value: %i\n", js.value);
   printf("type: %i\n", js.type);
@@ -54,7 +46,7 @@ void jsdiag(struct js_event js) {
 /** TODO Button Numbers!
  * gets events from JoyStick like the Ditto Looper
  * */
-void js_event_loop() {
+void JsEvents::js_event_loop() {
   struct js_event js;
 
   printf("In loop... Ctrl-C to exit.\n");
@@ -113,7 +105,7 @@ void js_event_loop() {
   }
 }
 
-void startJoystickEvents() {
+void JsEvents::startJoystickEvents() {
     open_joystick();
     js_event_loop();
 }

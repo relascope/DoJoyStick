@@ -4,6 +4,9 @@
 
 TEMPLATE = app
 TARGET = dojoystickaudio
+QT -= gui
+CONFIG += c++14 console
+CONFIG -= app_bundle
 INCLUDEPATH += .
 
 # The following define makes your compiler warn you if you use any
@@ -20,3 +23,6 @@ DEFINES += QT_DEPRECATED_WARNINGS
 # Input
 HEADERS += jsevent.h multiclick.h
 SOURCES += jsevent.cpp main.cpp
+
+DISTFILES += \
+    README.md
