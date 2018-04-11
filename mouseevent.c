@@ -31,7 +31,7 @@ int main() {
   //
   while (1) {
     if (read(fd, &ie, sizeof(struct input_event)) != -1) {
-      //
+	  //CLICK_TYPE
       button = ptr[0];
       bLeft = button & 0x1;
       bMiddle = (button & 0x4) > 0;
