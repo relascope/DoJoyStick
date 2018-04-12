@@ -9,8 +9,9 @@
 #include "jsevent.h"
 
 
-void JsEvents::setEventHandler(clickHandler _handler) {
-    handler = _handler;
+void JsEvents::setEventHandler(clickHandler handler, void *data) {
+	_handler = handler;
+	_handlerData = data;
 }
 
 const char *CLICK_TYPE_NAMES[] = {"SINGLE", "DOUBLE", "HOLD", "DOUBLE_HOLD",
@@ -92,8 +93,8 @@ void JsEvents::js_event_loop() {
         printType(curType);
 #endif
 
-        if (handler) {
-            (*handler)(curType);
+		if (_handler) {
+			(*_handler)(curType, _handlerData);
         }
 
         lastDownTime = curTime;

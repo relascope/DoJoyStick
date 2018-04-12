@@ -21,8 +21,10 @@ DEFINES += QT_DEPRECATED_WARNINGS
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 # Input
-HEADERS += jsevent.h multiclick.h
-SOURCES += jsevent.cpp main.cpp
+HEADERS += jsevent.h multiclick.h \
+    looper.h
+SOURCES += jsevent.cpp main.cpp \
+    looper.cpp
 
 DISTFILES += \
     README.md
