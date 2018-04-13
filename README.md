@@ -1,17 +1,23 @@
 Joystick Looper Control
 ========================
-Allows you to control a software looper with your joystick. 
-
+Allows you to control a software audio looper with your joystick. 
 
 Looper Control
 ------------------------
 Record Tap footswitch once.
+
 Switch to playback Tap footswitch again.
+
 Undo/Redo last recording Press and hold footswitch.
+
 Stop Double-tap footswitch.
+
 Stop and delete the loop Double-tap and hold footswitch.
+
 Resume playback Tap footswitch again.
+
 Delete the loop Press and hold footswitch (when Ditto Looper is disengaged). 
+
 
 Control is based on the **ditto looper** https://toneprints.com/media/1633414/tc_ditto_looper_manual_english.pdf
 
@@ -19,7 +25,7 @@ Requirements
 ------------------------
 liblo-tools (used for oscsend)
 
-###looper backend
+### looper backend
 
 only **SooperLooper** is supported
 http://essej.net/sooperlooper
