@@ -21,7 +21,7 @@ Delete the loop Press and hold footswitch (when Ditto Looper is disengaged).
 
 Control is based on the **ditto looper** https://toneprints.com/media/1633414/tc_ditto_looper_manual_english.pdf
 
-Requirements
+Runtime requirements
 ------------------------
 liblo-tools (used for oscsend)
 
@@ -30,10 +30,14 @@ liblo-tools (used for oscsend)
 only **SooperLooper** is supported
 http://essej.net/sooperlooper
 
+Build requirements
+------------------------
+boost msm
+
 Build
 ------------------------
-qmake
-make
+    qmake
+    make
 
 Developer Notes
 ------------------------
