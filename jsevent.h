@@ -3,6 +3,10 @@
 
 struct js_event;
 
+/**
+ * @brief The JsEvents class
+ * Reads Joystick events and propagates through EventHandler
+ */
 class JsEvents {
 public:
 	typedef enum { SINGLE = 0, DOUBLE, HOLD, DOUBLE_HOLD, UNDEF } CLICK_TYPE;
@@ -23,8 +27,9 @@ private:
 	const char *deviceName = "/dev/input/js0";
 	clickHandler _handler = 0;
 	void * _handlerData = 0;
+	int joy_fd;
 
-	int open_joystick();
+	void open_joystick();
 	void jsdiag(js_event js);
 	void js_event_loop();
 };

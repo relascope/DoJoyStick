@@ -1,13 +1,10 @@
-#include <stdlib.h>
-#include <stdio.h>
-
-#include <fcntl.h>
-//#include <sys/ioctl.h>
-#include <unistd.h>
-#include <linux/joystick.h>
-
 #include "jsevent.h"
 
+#include <fcntl.h>
+#include <iostream>
+#include <unistd.h>
+
+#include <linux/joystick.h>
 
 void JsEvents::setEventHandler(clickHandler handler, void *data) {
 	_handler = handler;
@@ -17,11 +14,11 @@ void JsEvents::setEventHandler(clickHandler handler, void *data) {
 const char *CLICK_TYPE_NAMES[] = {"SINGLE", "DOUBLE", "HOLD", "DOUBLE_HOLD",
                                   "UNDEF"};
 
-void JsEvents::printType(CLICK_TYPE t) { printf("%s\n", CLICK_TYPE_NAMES[t]); }
+void JsEvents::printType(CLICK_TYPE t) {
+	std::cout << CLICK_TYPE_NAMES[t] << std::endl;
+}
 
-int joy_fd;
-
-int JsEvents::open_joystick() {
+void JsEvents::open_joystick() {
   char name[128] = "Undefined";
   int buttons;
 
@@ -52,7 +49,7 @@ void JsEvents::js_event_loop() {
 
   printf("In loop... Ctrl-C to exit.\n");
 
-  CLICK_TYPE lastType = UNDEF;
+  // CLICK_TYPE lastType = UNDEF;
 
   long lastTime = 0;
   bool lastDown = false;
