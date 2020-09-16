@@ -40,6 +40,12 @@ Build
     qmake
     make
 
+
+Run
+------------------------
+
+
+
 Developer Notes
 ------------------------
 Backend Sooperlooper is controlled by Open Sound Control (OSC)
