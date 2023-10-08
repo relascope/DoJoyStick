@@ -27,10 +27,10 @@ add_executable(DoJoystick ${sources} ) # no data
 
 # just for example add some compiler flags
 
-target_compile_options(DoJoystick PUBLIC -Wall -Wextra -Werror -Wfloat-conversion)
+target_compile_options(DoJoystick PUBLIC -Wall -Wextra -Wfloat-conversion)
 
 # this lets me include files relative to the root source directory with a <> pair
-target_include_directories(DoJoystick PUBLIC src/main)
+#target_include_directories(DoJoystick PUBLIC src/main)
 
 # this copies all resource files in the build directory
 # we need this, because we want to work with paths relative to the executable
@@ -42,12 +42,22 @@ target_include_directories(DoJoystick PUBLIC src/main)
 
 # this defines the variables Boost_LIBRARIES that contain all library names
 # that we need to link to
-find_package(Boost 1.71.0 COMPONENTS msm REQUIRED)
+set(Boost_USE_STATIC_LIBS OFF)
+set(Boost_USE_MULTITHREADED ON)
+set(Boost_USE_STATIC_RUNTIME OFF)
+find_package(Boost 1.74 COMPONENTS msm)
 
-target_link_libraries(DoJoystick PUBLIC
-        ${Boost_LIBRARIES}
-        # here you can add any library dependencies
-)
+if(Boost_FOUND)
+    include_directories(${Boost_INCLUDE_DIRS})
+    target_link_libraries(DoJoystick ${Boost_LIBRARIES})
+endif()
+
+#find_package(Boost 1.74.0 COMPONENTS msm REQUIRED)
+#
+#target_link_libraries(DoJoystick PUBLIC
+#        ${Boost_LIBRARIES}
+#        # here you can add any library dependencies
+#)
 
 ###############################################################################
 ## testing ####################################################################
