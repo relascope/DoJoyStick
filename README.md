@@ -1,6 +1,7 @@
-Joystick Looper Control
+DoJoy-Stick
 ========================
-Allows you to control a software audio looper with your joystick. 
+* Joystick Looper:  Allows you to control  ***[sooperlooper](http://essej.net/sooperlooper)***  with your joystick.  
+* Joystick as a Midi-Device (planned)
 
 Looper Control
 ------------------------
@@ -28,8 +29,7 @@ liblo-tools (used for oscsend)
 
 ### looper backend
 
-only **SooperLooper** is supported
-http://essej.net/sooperlooper
+only ***[sooperlooper](http://essej.net/sooperlooper)*** is supported
 
 Build requirements
 ------------------------
@@ -37,7 +37,6 @@ boost msm
 
 Build
 ------------------------
-    qmake
     make
 
 
@@ -53,4 +52,11 @@ Backend Sooperlooper is controlled by Open Sound Control (OSC)
 Sooperlooper OSC commands (some of them)
 http://essej.net/sooperlooper/doc_osc.html
 
+### projects worth mentioning
+MidiJoystick: could not be compiled on modern ubuntu22.04
+QJoyStick: use JoyStick with Qt Library
+
+### interesting packages    
+
+    joystick evtest inputattach
 
