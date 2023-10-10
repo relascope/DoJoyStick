@@ -11,7 +11,11 @@ set(CMAKE_CXX_STANDARD 20)
 # these instructions search the directory tree when CMake is
 # invoked and put all files that match the pattern in the variables
 # `sources` and `data`
-file(GLOB_RECURSE sources      *.cpp *.h *.hpp *.c)
+#file(GLOB_RECURSE sources      *.cpp *.h *.hpp *.c) !!! GLOB_RECURSE also finds data in cmake-* folders
+SET ( CMAKE_SOURCE_DIR "./" )
+FILE(GLOB TARGET_H "${CMAKE_SOURCE_DIR}/*.h")
+FILE(GLOB TARGET_CPP "${CMAKE_SOURCE_DIR}/*.cpp")
+SET(TARGET_SRC ${TARGET_CPP} ${TARGET_H})
 #file(GLOB_RECURSE sources_test src/test/*.cpp)
 #file(GLOB_RECURSE data resources/*)
 # you can use set(sources src/main.cpp) etc if you don't want to
@@ -23,7 +27,7 @@ file(GLOB_RECURSE sources      *.cpp *.h *.hpp *.c)
 
 # add the data to the target, so it becomes visible in some IDE
 # add_executable(DoJoystick ${sources} ${data}) # if you have data
-add_executable(DoJoystick ${sources} ) # no data
+add_executable(DoJoystick ${TARGET_SRC} ) # no data
 
 # just for example add some compiler flags
 
