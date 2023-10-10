@@ -1,0 +1,3 @@
+[submodule "MidiJoystick"]
+	path = MidiJoystick
+	url = https://github.com/relascope/MidiJoystick.git
