@@ -11,7 +11,7 @@ class JsEvents {
 public:
 	typedef enum { SINGLE = 0, DOUBLE, HOLD, DOUBLE_HOLD, UNDEF } CLICK_TYPE;
 
-	typedef void (*clickHandler)(CLICK_TYPE t, void * data);
+	typedef void (*clickHandler)(struct js_event event, CLICK_TYPE t, void * data);
 
 	void startJoystickEvents();
 

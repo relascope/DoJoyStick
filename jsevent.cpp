@@ -91,7 +91,7 @@ void JsEvents::js_event_loop() {
 #endif
 
 		if (_handler) {
-			(*_handler)(curType, _handlerData);
+			(*_handler)(js, curType, _handlerData);
         }
 
         lastDownTime = curTime;

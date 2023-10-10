@@ -1,11 +1,12 @@
 // TODO Different Buttons
 
 #include "dojoysticklooper.hpp"
+#include <linux/joystick.h>
 
 #include "jsevent.h"
 
 
-void event_handler(JsEvents::CLICK_TYPE t, void * data) {
+void event_handler(struct js_event event, JsEvents::CLICK_TYPE t, void * data) {
     JsEvents::printType(t);
 }
 
