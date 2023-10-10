@@ -15,7 +15,12 @@ set(CMAKE_CXX_STANDARD 20)
 SET ( CMAKE_SOURCE_DIR "./" )
 FILE(GLOB TARGET_H "${CMAKE_SOURCE_DIR}/*.h")
 FILE(GLOB TARGET_CPP "${CMAKE_SOURCE_DIR}/*.cpp")
-SET(TARGET_SRC ${TARGET_CPP} ${TARGET_H})
+file(GLOB  MIDI_JOYSTICK_SRC glue.c joystick.c midijack.c)
+file (GLOB SUB_JOYSTICK_SRC "./MidiJoystick" )
+FILE(GLOB SUB_TARGET_H "${SUB_JOYSTICK_SRC}/*.h")
+FILE(GLOB SUB_TARGET_CPP "${SUB_JOYSTICK_SRC}/*.c")
+SET(TARGET_SRC ${TARGET_CPP} ${TARGET_H} ${SUB_TARGET_CPP} ${SUB_TARGET_H})
+include_directories(${SUB_JOYSTICK_SRC})
 #file(GLOB_RECURSE sources_test src/test/*.cpp)
 #file(GLOB_RECURSE data resources/*)
 # you can use set(sources src/main.cpp) etc if you don't want to
@@ -55,6 +60,8 @@ if(Boost_FOUND)
     include_directories(${Boost_INCLUDE_DIRS})
     target_link_libraries(DoJoystick ${Boost_LIBRARIES})
 endif()
+
+target_link_libraries( DoJoystick -ljack )
 
 #find_package(Boost 1.74.0 COMPONENTS msm REQUIRED)
 #
