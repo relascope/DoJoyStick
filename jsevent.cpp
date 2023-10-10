@@ -45,7 +45,7 @@ void JsEvents::jsdiag(struct js_event js) {
  * gets events from JoyStick like the Ditto Looper
  * */
 void JsEvents::js_event_loop() {
-  struct js_event js;
+  struct js_event jsEvent;
 
   printf("In loop... Ctrl-C to exit.\n");
 
@@ -59,16 +59,16 @@ void JsEvents::js_event_loop() {
   bool isDouble = false;
 
   while (1) {
-    if (read(joy_fd, &js, sizeof(struct js_event)) != sizeof(struct js_event)) {
+    if (read(joy_fd, &jsEvent, sizeof(struct js_event)) != sizeof(struct js_event)) {
       perror("Error reading ");
       exit(-1);
     }
 
-//    jsdiag(js);
+//    jsdiag(jsEvent);
 
-    if (js.type == JS_EVENT_BUTTON) {
-      long curTime = js.time;
-      bool curDown = js.value == 1;
+    if (jsEvent.type == JS_EVENT_BUTTON) {
+      long curTime = jsEvent.time;
+      bool curDown = jsEvent.value == 1;
       bool isHold = false;
 
       if (!lastDown && curDown) {
@@ -82,16 +82,16 @@ void JsEvents::js_event_loop() {
           isHold = true;
         }
 
-        CLICK_TYPE curType = (CLICK_TYPE)(2 * isHold + 1 * isDouble);
+        CLICK_TYPE curPressType = (CLICK_TYPE)(2 * isHold + 1 * isDouble);
 
         isDouble = false;
 
 #ifndef NDEBUG
-        printType(curType);
+        printType(curPressType);
 #endif
 
 		if (_handler) {
-			(*_handler)(js, curType, _handlerData);
+			(*_handler)(jsEvent, curPressType, _handlerData);
         }
 
         lastDownTime = curTime;
