@@ -4,6 +4,7 @@
 #include <iostream>
 #include <unistd.h>
 
+#include <cstring>
 #include <linux/joystick.h>
 
 void JsEvents::setEventHandler(clickHandler handler, void *data) {
@@ -41,33 +42,27 @@ void JsEvents::jsdiag(struct js_event js) {
   printf("number: %i\n", js.number);
 }
 
-/** TODO Button Numbers!
- * gets events from JoyStick like the Ditto Looper
- * */
 void JsEvents::js_event_loop() {
-  struct js_event jsEvent;
+  struct js_event jsEvent {};
+  memset(&jsEvent, 0, sizeof(js_event));
 
-  printf("In loop... Ctrl-C to exit.\n");
-
-  // CLICK_TYPE lastType = UNDEF;
+  std::cout << "Starting main Joystick query loop. Ctrl-C to exit.\n" << "\n";
 
   long lastTime = 0;
   bool lastDown = false;
-
   long lastDownTime = 0;
-
   bool isDouble = false;
 
-  while (1) {
+  while (true) {
     if (read(joy_fd, &jsEvent, sizeof(struct js_event)) != sizeof(struct js_event)) {
       perror("Error reading ");
       exit(-1);
     }
 
-//    jsdiag(jsEvent);
+    CLICK_TYPE curPressType = CLICK_TYPE::UNDEF;
 
     if (jsEvent.type == JS_EVENT_BUTTON) {
-      long curTime = jsEvent.time;
+      __u32 curTime = jsEvent.time;
       bool curDown = jsEvent.value == 1;
       bool isHold = false;
 
@@ -82,23 +77,19 @@ void JsEvents::js_event_loop() {
           isHold = true;
         }
 
-        CLICK_TYPE curPressType = (CLICK_TYPE)(2 * isHold + 1 * isDouble);
+        curPressType = (CLICK_TYPE)(2 * isHold + 1 * isDouble);
 
         isDouble = false;
-
-#ifndef NDEBUG
-        printType(curPressType);
-#endif
-
-		if (_handler) {
-			(*_handler)(jsEvent, curPressType, _handlerData);
-        }
 
         lastDownTime = curTime;
       }
 
       lastTime = curTime;
       lastDown = curDown;
+    }
+
+    if (_handler) {
+      (*_handler)(jsEvent, curPressType, _handlerData);
     }
   }
 }

@@ -19,6 +19,7 @@ public:
 
 	static void printType(CLICK_TYPE t);
 
+    static void jsdiag(js_event js);
 private:
 
 	// TODO allow to set parameters
@@ -30,7 +31,6 @@ private:
 	int joy_fd;
 
 	void open_joystick();
-	void jsdiag(js_event js);
 	void js_event_loop();
 };
 
