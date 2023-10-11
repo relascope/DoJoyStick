@@ -1,6 +1,7 @@
 #ifndef JSEVENT_H
 #define JSEVENT_H
 
+#include <string>
 struct js_event;
 
 /**
@@ -9,11 +10,13 @@ struct js_event;
  */
 class JsEvents {
 public:
+    JsEvents(std::string joyStickDeviceName = "/dev/input/js0");
+
 	typedef enum { SINGLE = 0, DOUBLE, HOLD, DOUBLE_HOLD, UNDEF } CLICK_TYPE;
 
 	typedef void (*clickHandler)(struct js_event event, CLICK_TYPE t, void * data);
 
-	void startJoystickEvents();
+	void js_event_loop();
 
 	void setEventHandler(clickHandler handler, void *data = 0);
 
@@ -25,13 +28,12 @@ private:
 	// TODO allow to set parameters
 	int holdTime = 700;
 	int dblTime = 250;
-	const char *deviceName = "/dev/input/js0";
+	const char *deviceName;
 	clickHandler _handler = 0;
 	void * _handlerData = 0;
 	int joy_fd;
 
 	void open_joystick();
-	void js_event_loop();
 };
 
 #endif

@@ -7,6 +7,10 @@
 #include <cstring>
 #include <linux/joystick.h>
 
+JsEvents::JsEvents(const std::string joyStickDeviceName) : deviceName(joyStickDeviceName.c_str()) {
+    open_joystick();
+}
+
 void JsEvents::setEventHandler(clickHandler handler, void *data) {
 	_handler = handler;
 	_handlerData = data;
@@ -92,9 +96,4 @@ void JsEvents::js_event_loop() {
       (*_handler)(jsEvent, curPressType, _handlerData);
     }
   }
-}
-
-void JsEvents::startJoystickEvents() {
-    open_joystick();
-    js_event_loop();
 }

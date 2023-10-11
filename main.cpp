@@ -1,29 +1,19 @@
 // TODO Different Buttons
 
 #include "dojoysticklooper.hpp"
-#include <iostream>
-#include <iostream>
-#include <iostream>
-#include <iostream>
-#include <linux/joystick.h>
 
+
+#include "JoystickMidiMediator.h"
 #include "jsevent.h"
 
-
-void event_handler(struct js_event event, JsEvents::CLICK_TYPE t, void * data) {
-    std::cout << "===============EVENT===========" << std::endl;
-    JsEvents::jsdiag(event);
-    JsEvents::printType(t);
-}
 
 int main(int argc, char *argv[]) {
 //	DoJoyStickLooper looper;
 
 //	looper.start();
 
-    JsEvents jsEvents;
-    jsEvents.setEventHandler(&event_handler, &jsEvents);
-    jsEvents.startJoystickEvents();
+    JoystickMidiMediator joystick_midi("/dev/input/js0");
+    joystick_midi.run_main_loop();
 
     return 0;
 }
