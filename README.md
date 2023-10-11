@@ -1,7 +1,21 @@
 DoJoy-Stick
 ========================
+* Joystick as a (jack)Midi-Device
 * Joystick Looper:  Allows you to control  ***[sooperlooper](http://essej.net/sooperlooper)***  with your joystick.  
-* Joystick as a Midi-Device (planned)
+
+Status
+========================
+- Joystick sends Midi data (configurable only through sourcecode at the moment - @see JoystickMediator.cpp). Usecase 
+  Joystick Microsoft SideWinder Precision Pro (USB) as a foot-pedal with x42 Black Pearl Drumkit
+
+
+- Looper doesn't compile anymore with up to date boost msm libraries
+
+Planned
+========================
+- fix looper
+- configure through file
+- generalize joystick events (send osc, send keyboard event, open program,...)
 
 Looper Control
 ------------------------
@@ -33,16 +47,20 @@ only ***[sooperlooper](http://essej.net/sooperlooper)*** is supported
 
 Build requirements
 ------------------------
+jack
 boost msm
 
 Build
 ------------------------
+    cd DoJostick
+    mk build
+    cd build
+    cmake ..
     make
-
 
 Run
 ------------------------
-
+    ./DoJoystick
 
 
 Developer Notes
