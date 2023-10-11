@@ -5,6 +5,7 @@
 #ifndef DOJOYSTICK_JOYSTICKMIDIMEDIATOR_H
 #define DOJOYSTICK_JOYSTICKMIDIMEDIATOR_H
 
+#include "glue.h"
 #include "jsevent.h"
 #include <jack/ringbuffer.h>
 #include <linux/joystick.h>
@@ -20,6 +21,7 @@ private:
     void setupJoystick();
     JsEvents jsEvents;
     jack_ringbuffer_t *jrb = nullptr;
+    void sendMidiMessage(const char *msg, size_t size);
 };
 
 #endif//DOJOYSTICK_JOYSTICKMIDIMEDIATOR_H

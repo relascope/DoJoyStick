@@ -15,27 +15,45 @@ JoystickMidiMediator::JoystickMidiMediator(const std::string joystickDeviceName)
     setup_jack(&jrb, DEFAULT_RB_SIZE);
 }
 
-void JoystickMidiMediator::event_handler(struct js_event event, JsEvents::CLICK_TYPE t, void *) {
+void JoystickMidiMediator::event_handler(struct js_event event, JsEvents::CLICK_TYPE t, void *__this) {
     std::cout << "===============EVENT===========" << std::endl;
     JsEvents::jsdiag(event);
     JsEvents::printType(t);
+
+    char msg[3];
+    msg[2] = 111;
+    msg[1] = 69;
+    msg[0] = 0x90;
+
+    ((JoystickMidiMediator *) (__this))->sendMidiMessage(msg, sizeof(msg));
 }
 
 void JoystickMidiMediator::run_main_loop() {
     jsEvents.js_event_loop();
 }
 
+void JoystickMidiMediator::sendMidiMessage(const char *msg, size_t size) {
+    if (size == 0) return;
 
-//int SEND_MIDI(___SCMOBJ msg, size_t size) {
-//
-//     struct midi_msg midi;
-//
-//     ___SCMOBJ lst = msg;
-//
-//     if (size == 0)
-//	  return 0;
-//
-//     memset(&midi, 0, sizeof(midi));
+    struct midi_msg midi;
+    memset(&midi, 0, sizeof(midi));
+
+    for (size_t i = 0; i < size && i < MAX_MIDI_MSG; i++) {
+        midi.msg[i] = msg[i];
+    }
+
+    midi.size = size;
+
+    if (jack_ringbuffer_write_space(jrb) < sizeof(midi)) {
+        //	  fprintf(stderr, "midi message will not fit in ringbuffer\n");
+        throw "midi message will not fit in ringbuffer\n";
+    }
+
+    if ((jack_ringbuffer_write(jrb, (const char *) (void *) &midi, sizeof(midi))) != sizeof(midi)) {
+        throw "error writing midi to ringbuffer";
+    }
+}
+
 //     for (int i=0; i < size && ___PAIRP(lst) && i < MAX_MIDI_MSG; ++i) {
 //	  ___SCMOBJ scm_int = ___CAR(lst);
 //	  uint8_t c_int;
