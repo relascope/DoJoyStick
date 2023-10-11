@@ -17,7 +17,7 @@ public:
     void run_main_loop();
 
 private:
-    static void event_handler(struct js_event event, JsEvents::CLICK_TYPE t, void *);
+    static void event_handler(JoystickEvent event, void *);
     void setupJoystick();
     JsEvents jsEvents;
     jack_ringbuffer_t *jrb = nullptr;

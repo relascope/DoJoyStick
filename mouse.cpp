@@ -18,7 +18,7 @@
 //}
 //
 //const char *CLICK_TYPE_NAMES[] = {"SINGLE", "DOUBLE", "HOLD", "DOUBLE_HOLD",
-//                                  "UNDEF"};
+//                                  "DOWN"};
 //void printType(CLICK_TYPE t) { printf("%s\n", CLICK_TYPE_NAMES[t]); }
 //
 //int fd;
@@ -49,7 +49,7 @@
 //
 //  printf("In loop... Ctrl-C to exit.\n");
 //
-//  CLICK_TYPE lastType = UNDEF;
+//  CLICK_TYPE lastType = DOWN;
 //
 //  long lastTime = 0;
 //  bool lastDown = false;
@@ -91,7 +91,7 @@
 //
 //  modiag(ie);
 //
-////    jsdiag(js);
+////    print_js_event(js);
 //
 //    if (js.type == JS_EVENT_BUTTON) {
 //      long curTime = js.time;

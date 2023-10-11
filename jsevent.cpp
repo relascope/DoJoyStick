@@ -16,13 +16,6 @@ void JsEvents::setEventHandler(clickHandler handler, void *data) {
     _handlerData = data;
 }
 
-const char *CLICK_TYPE_NAMES[] = {"SINGLE", "DOUBLE", "HOLD", "DOUBLE_HOLD",
-                                  "UNDEF"};
-
-void JsEvents::printType(CLICK_TYPE t) {
-    std::cout << CLICK_TYPE_NAMES[t] << std::endl;
-}
-
 void JsEvents::open_joystick() {
     char name[128] = "Undefined";
     int buttons;
@@ -37,13 +30,6 @@ void JsEvents::open_joystick() {
     ioctl(joy_fd, JSIOCGNAME(128), name);
 
     printf("Joystick %s with %i buttons\n", name, buttons);
-}
-
-void JsEvents::jsdiag(struct js_event js) {
-    printf("time: %i\n", js.time);
-    printf("value: %i\n", js.value);
-    printf("type: %i\n", js.type);
-    printf("number: %i\n", js.number);
 }
 
 void JsEvents::js_event_loop() {
@@ -64,7 +50,7 @@ void JsEvents::js_event_loop() {
             exit(-1);
         }
 
-        CLICK_TYPE curPressType = CLICK_TYPE::UNDEF;
+        JoystickEvent::CLICK_TYPE curPressType = JoystickEvent::CLICK_TYPE::DOWN;
 
         if (jsEvent.type == JS_EVENT_BUTTON) {
             __u32 curTime = jsEvent.time;
@@ -82,7 +68,7 @@ void JsEvents::js_event_loop() {
                     isHold = true;
                 }
 
-                curPressType = (CLICK_TYPE) (2 * isHold + 1 * isDouble);
+                curPressType = (JoystickEvent::CLICK_TYPE)(2 * isHold + 1 * isDouble);
 
                 isDouble = false;
 
@@ -94,7 +80,7 @@ void JsEvents::js_event_loop() {
         }
 
         if (_handler) {
-            (*_handler)(jsEvent, curPressType, _handlerData);
+            (*_handler)({jsEvent, curPressType}, _handlerData);
         }
     }
 }

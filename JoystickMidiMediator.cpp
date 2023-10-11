@@ -15,17 +15,17 @@ JoystickMidiMediator::JoystickMidiMediator(const std::string joystickDeviceName)
     setup_jack(&jrb, DEFAULT_RB_SIZE);
 }
 
-void JoystickMidiMediator::event_handler(struct js_event event, JsEvents::CLICK_TYPE t, void *__this) {
+void JoystickMidiMediator::event_handler(JoystickEvent event, void *__this) {
     std::cout << "===============EVENT===========" << std::endl;
-    JsEvents::jsdiag(event);
-    JsEvents::printType(t);
+
+    event.print();
 
     char msg[3];
     msg[2] = 111;
     msg[1] = 0x3c;
-    msg[0] = event.value == 1 ? 0x90 : 0x80;
+    msg[0] = event.isButtonDown() == 1 ? 0x90 : 0x80;
 
-    ((JoystickMidiMediator *) (__this))->sendMidiMessage(msg, sizeof(msg));
+    (static_cast<JoystickMidiMediator *> (__this))->sendMidiMessage(msg, sizeof(msg));
 }
 
 void JoystickMidiMediator::run_main_loop() {

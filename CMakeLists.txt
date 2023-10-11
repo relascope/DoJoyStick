@@ -54,7 +54,7 @@ target_compile_options(DoJoystick PUBLIC -Wall -Wextra -Wfloat-conversion)
 set(Boost_USE_STATIC_LIBS OFF)
 set(Boost_USE_MULTITHREADED ON)
 set(Boost_USE_STATIC_RUNTIME OFF)
-find_package(Boost 1.74 COMPONENTS msm)
+find_package(Boost 1.74 COMPONENTS msm )
 
 if(Boost_FOUND)
     include_directories(${Boost_INCLUDE_DIRS})
