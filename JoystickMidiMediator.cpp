@@ -10,6 +10,9 @@
 #include <iostream>
 #include <linux/joystick.h>
 
+
+char velocity = 111;
+
 void JoystickMidiMediator::event_handler(JoystickEvent event, void *__this) {
     std::cout << "===============EVENT===========" << std::endl;
 
@@ -17,10 +20,22 @@ void JoystickMidiMediator::event_handler(JoystickEvent event, void *__this) {
 
     // Button #4,5,6,7 are A,B,C,D on Joystick Microsoft Microsoft SideWinder Precision Pro
     // for the time just hardcode to be a good left foot pedal for x42 Black Pearl drumkit
+    
+    if (event.getButtonNumber() == 2) {
+        if (event.getNativeEvent().value < 0) {
+            velocity--;
+        } else if (event.getNativeEvent().value > 0) {
+            velocity++;
+        }
+
+        // prevent overflow and underflow
+        velocity %= 128;
+        return;
+    }
 
     char msg[3];
     msg[0] = event.isButtonDown() == 1 ? 0x90 : 0x80;
-    msg[2] = 111;
+    msg[2] = velocity;
 
     switch (event.getButtonNumber()) {
         case 4:
