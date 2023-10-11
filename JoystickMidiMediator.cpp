@@ -20,12 +20,32 @@ void JoystickMidiMediator::event_handler(JoystickEvent event, void *__this) {
 
     event.print();
 
-    char msg[3];
-    msg[2] = 111;
-    msg[1] = 0x3c;
-    msg[0] = event.isButtonDown() == 1 ? 0x90 : 0x80;
 
-    (static_cast<JoystickMidiMediator *> (__this))->sendMidiMessage(msg, sizeof(msg));
+    // Button #4,5,6,7 are A,B,C,D on Joystick Microsoft Microsoft SideWinder Precision Pro
+    // for the time just hardcode to be a good left foot pedal for x42 Black Pearl drumkit
+
+
+    char msg[3];
+    msg[0] = event.isButtonDown() == 1 ? 0x90 : 0x80;
+    msg[2] = 111;
+
+    switch (event.getButtonNumber()) {
+        case 4:
+            msg[1] = 0x31;// 49;// C# 3 Crash Cymbal 1
+            break;
+        case 5:
+            msg[1] = 0x30;//48; // C3 Swish HiHat
+            break;
+        case 6:
+            msg[1] = 0x26;//38; // D2 Snare Ctr.
+            break;
+        case 7:
+            msg[1] = 0x29;//41; // F2 FLoor Tom Ctr.
+            break;
+        default:
+            return;
+    }
+    (static_cast<JoystickMidiMediator *>(__this))->sendMidiMessage(msg, sizeof(msg));
 }
 
 void JoystickMidiMediator::run_main_loop() {

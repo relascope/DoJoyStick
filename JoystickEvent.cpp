@@ -19,8 +19,8 @@ void JoystickEvent::print() const {
 }
 
 void JoystickEvent::print_js_event(struct js_event js) {
-    std::cout << "time: <<" << js.time << '\n';
-    std::cout << "value (up/down): <<" << js.value << '\n';
-    std::cout << "type (button/axis): <<" << js.type << '\n';
-    std::cout << "number: <<" << js.number << '\n';
+    std::cout << "time: " << js.time << '\n';
+    std::cout << "value (up/down): " << js.value << '\n';
+    std::cout << "type (button/axis): " << (int) js.type << '\n';
+    std::cout << "number: " << (int)js.number << '\n';
 }

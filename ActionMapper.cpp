@@ -3,3 +3,6 @@
 //
 
 #include "ActionMapper.h"
+void ActionMapper::performActionsForEvent(JoystickEvent event) {
+
+}
