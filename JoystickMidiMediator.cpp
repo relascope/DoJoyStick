@@ -22,8 +22,8 @@ void JoystickMidiMediator::event_handler(struct js_event event, JsEvents::CLICK_
 
     char msg[3];
     msg[2] = 111;
-    msg[1] = 69;
-    msg[0] = 0x90;
+    msg[1] = 0x3c;
+    msg[0] = event.value == 1 ? 0x90 : 0x80;
 
     ((JoystickMidiMediator *) (__this))->sendMidiMessage(msg, sizeof(msg));
 }
