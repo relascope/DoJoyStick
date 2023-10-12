@@ -13,7 +13,7 @@
 
 class JoystickMidiMediator {
 public:
-    explicit JoystickMidiMediator(std::string joystickDeviceName);
+    explicit JoystickMidiMediator(const std::string &joystickDeviceName);
     void run_main_loop();
 private:
     static void event_handler(JoystickEvent event, void *);
@@ -21,6 +21,7 @@ private:
     JsEvents jsEvents;
     jack_ringbuffer_t *jrb = nullptr;
     void sendMidiMessage(const char *msg, size_t size);
+    static void printMidiMessage(const char *msg, size_t size, bool hex = true);
 };
 
 #endif//DOJOYSTICK_JOYSTICKMIDIMEDIATOR_H
