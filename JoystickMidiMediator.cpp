@@ -19,17 +19,15 @@ void JoystickMidiMediator::event_handler(JoystickEvent event, void *joystickMedi
     JoystickMidiMediator *_this = (static_cast<JoystickMidiMediator *>(joystickMediator));
 
     // Button #4,5,6,7 are A,B,C,D on Joystick Microsoft Microsoft SideWinder Precision Pro
+    // Button "ArrowUp" is 8
     // for the time just hardcode to be a good left foot pedal for x42 Black Pearl drumkit
 
     if (event.getButtonNumber() == 2) {
         if (event.getNativeEvent().value < 0) {
-            velocity--;
+            velocity = std::max(velocity -1, 0);
         } else if (event.getNativeEvent().value > 0) {
-            velocity++;
+            velocity = std::min(velocity +1, 128);
         }
-
-        // prevent overflow and underflow
-        velocity %= static_cast<char>(128);
         return;
     }
 
@@ -63,6 +61,16 @@ void JoystickMidiMediator::event_handler(JoystickEvent event, void *joystickMedi
             msg[0] = event.isButtonDown() == 1 ? 0x90 : 0x80;
             msg[2] = velocity;
             msg[1] = 0x29;//41; // F2 FLoor Tom Ctr.
+            _this->sendMidiMessage(msg, sizeof(msg));
+            break;
+        case 8:
+            msg[0] = event.isButtonDown() == 1 ? 0x90 : 0x80;
+            msg[2] = velocity;
+            msg[1] = 0x24;//C2 (36) hydrogen GM Rock Kit groovy Base//
+            _this->sendMidiMessage(msg, sizeof(msg));
+
+            msg[1] = 0x29;// F2 41 Floor Tom Ctr.
+            msg[2] = (velocity - 42) % 128;
             _this->sendMidiMessage(msg, sizeof(msg));
             break;
         default:
