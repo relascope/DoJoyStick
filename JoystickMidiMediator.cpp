@@ -13,10 +13,10 @@
 
 char velocity = 111;
 
-void JoystickMidiMediator::event_handler(JoystickEvent event, void *__this) {
+void JoystickMidiMediator::event_handler(JoystickEvent event, void *joystickMediator) {
     std::cout << "===============EVENT===========" << std::endl;
-
     event.print();
+    JoystickMidiMediator *_this = (static_cast<JoystickMidiMediator *>(joystickMediator));
 
     // Button #4,5,6,7 are A,B,C,D on Joystick Microsoft Microsoft SideWinder Precision Pro
     // for the time just hardcode to be a good left foot pedal for x42 Black Pearl drumkit
@@ -33,27 +33,38 @@ void JoystickMidiMediator::event_handler(JoystickEvent event, void *__this) {
         return;
     }
 
-    char msg[3];
-    msg[0] = event.isButtonDown() == 1 ? 0x90 : 0x80;
-    msg[2] = velocity;
 
     switch (event.getButtonNumber()) {
+            char msg[3];
         case 4:
+            msg[0] = event.isButtonDown() == 1 ? 0x90 : 0x80;
+            msg[2] = velocity;
             msg[1] = 0x31;// 49;// C# 3 Crash Cymbal 1
+            _this->sendMidiMessage(msg, sizeof(msg));
             break;
         case 5:
+            msg[0] = event.isButtonDown() == 1 ? 0x90 : 0x80;
+            msg[2] = velocity;
             msg[1] = 0x30;//48; // C3 Swish HiHat
+            _this->sendMidiMessage(msg, sizeof(msg));
             break;
         case 6:
-            msg[1] = 0x26;//38; // D2 Snare Ctr.
+            msg[0] = event.isButtonDown() == 1 ? 0x90 : 0x80;
+            msg[2] = velocity;
+            msg[1] = 0x24; //C2 (36) hydrogen GM Rock Kit groovy Base//
+            _this->sendMidiMessage(msg, sizeof(msg));
+            msg [1] = 0x26; // 0x26;//38; // D2 Snare Ctr.
+            _this->sendMidiMessage(msg, sizeof(msg));
             break;
         case 7:
+            msg[0] = event.isButtonDown() == 1 ? 0x90 : 0x80;
+            msg[2] = velocity;
             msg[1] = 0x29;//41; // F2 FLoor Tom Ctr.
+            _this->sendMidiMessage(msg, sizeof(msg));
             break;
         default:
             return;
     }
-    (static_cast<JoystickMidiMediator *>(__this))->sendMidiMessage(msg, sizeof(msg));
 }
 
 JoystickMidiMediator::JoystickMidiMediator(const std::string joystickDeviceName) : jsEvents(joystickDeviceName) {
@@ -86,29 +97,3 @@ void JoystickMidiMediator::sendMidiMessage(const char *msg, size_t size) {
         throw "error writing midi to ringbuffer";
     }
 }
-
-//     for (int i=0; i < size && ___PAIRP(lst) && i < MAX_MIDI_MSG; ++i) {
-//	  ___SCMOBJ scm_int = ___CAR(lst);
-//	  uint8_t c_int;
-//	  ___SCMOBJ ___err;
-//	  ___err = ___EXT(___SCMOBJ_to_U8) (scm_int, &c_int, size);
-//	  if (___err != ___FIX(___NO_ERR)) {
-//            return ___err;
-//	  }
-//	  midi.msg[i] = c_int;
-//	  lst = ___CDR(lst);
-//     }
-//     midi.size = size;
-////     fprintf(stderr, "m1: %x m2: %x m3: %x\n", midi.msg[0], midi.msg[1], midi.msg[2]);
-//
-//
-//
-//     if (jack_ringbuffer_write_space(jrb) < sizeof(midi)) {
-////	  fprintf(stderr, "midi message will not fit in ringbuffer\n");
-//	  return -1;
-//     }
-//
-//     if(jack_ringbuffer_write(jrb, (void*) &midi, sizeof(midi)) != sizeof(midi))
-//	  return -1;
-//     return 0;
-//}

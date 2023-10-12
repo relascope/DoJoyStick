@@ -15,7 +15,6 @@ class JoystickMidiMediator {
 public:
     explicit JoystickMidiMediator(std::string joystickDeviceName);
     void run_main_loop();
-
 private:
     static void event_handler(JoystickEvent event, void *);
     void setupJoystick();
