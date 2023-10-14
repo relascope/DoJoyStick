@@ -22,14 +22,19 @@ void JoystickMidiMediator::event_handler(JoystickEvent event, void *joystickMedi
     // Button "ArrowUp" is 8
     // for the time just hardcode to be a good left foot pedal for x42 Black Pearl drumkit
 
-    if (event.getButtonNumber() == 2) {
-        if (event.getNativeEvent().value < 0) {
-            velocity = std::max(velocity -1, 0);
-        } else if (event.getNativeEvent().value > 0) {
-            velocity = std::min(velocity +1, 128);
-        }
-        return;
-    }
+    // axis number 2 not good for velocity change
+//    if (event.getButtonNumber() == 2) {
+//        if (event.getNativeEvent().value < 0) {
+//            velocity = std::max(velocity - 1, 0);
+//        } else if (event.getNativeEvent().value > 0) {
+//            velocity = std::min(velocity + 1, 128);
+//        }
+//
+//        std::cout << "================================================================" << '\n';
+//        std::cout << "velocity: " << velocity << std::endl;
+//
+//        return;
+//    }
 
 
     switch (event.getButtonNumber()) {
