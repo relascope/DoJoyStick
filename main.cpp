@@ -4,7 +4,7 @@
 
 
 #include "JoystickMidiMediator.h"
-#include "jsevent.h"
+//#include "joystick-gateway.h"
 
 
 int main(int argc, char *argv[]) {

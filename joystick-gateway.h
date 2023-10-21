@@ -5,12 +5,12 @@
 #include <string>
 
 /**
- * @brief The JsEvents class
+ * @brief The JoystickGateway class
  * Reads Joystick events and propagates through EventHandler
  */
-class JsEvents {
+class JoystickGateway {
 public:
-    JsEvents(std::string joyStickDeviceName = "/dev/input/js0");
+    explicit JoystickGateway(std::string joyStickDeviceName = "/dev/input/js0");
 
     typedef void (*clickHandler)(JoystickEvent, void *data);
 

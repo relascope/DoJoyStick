@@ -1,4 +1,4 @@
-#include "jsevent.h"
+#include "joystick-gateway.h"
 
 #include <fcntl.h>
 #include <iostream>
@@ -7,16 +7,16 @@
 #include <cstring>
 #include <linux/joystick.h>
 
-JsEvents::JsEvents(const std::string joyStickDeviceName) : deviceName(joyStickDeviceName.c_str()) {
+JoystickGateway::JoystickGateway(const std::string joyStickDeviceName) : deviceName(joyStickDeviceName.c_str()) {
     open_joystick();
 }
 
-void JsEvents::setEventHandler(clickHandler handler, void *data) {
+void JoystickGateway::setEventHandler(clickHandler handler, void *data) {
     _handler = handler;
     _handlerData = data;
 }
 
-void JsEvents::open_joystick() {
+void JoystickGateway::open_joystick() {
     char name[128] = "Undefined";
     int buttons;
 
@@ -32,7 +32,7 @@ void JsEvents::open_joystick() {
     printf("Joystick %s with %i buttons\n", name, buttons);
 }
 
-void JsEvents::js_event_loop() {
+void JoystickGateway::js_event_loop() {
     struct js_event jsEvent {};
     memset(&jsEvent, 0, sizeof(js_event));
 

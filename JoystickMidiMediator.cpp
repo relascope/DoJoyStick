@@ -5,7 +5,7 @@
 #include "JoystickMidiMediator.h"
 #include "dojoysticklooper.hpp"
 #include "glue.h"
-#include "jsevent.h"
+#include "joystick-gateway.h"
 #include "midijack.h"
 #include <iostream>
 #include <linux/joystick.h>
