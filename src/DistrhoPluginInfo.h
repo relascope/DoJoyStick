@@ -9,8 +9,9 @@
 #define DISTRHO_PLUGIN_URI   "https://dojoy.at.com/REIS0/DPFTutorial"
 #define DISTRHO_PLUGIN_CLAP_ID "https://dojoy.com/REIS0/DPFTutorial"
 
-#define DISTRHO_PLUGIN_NUM_INPUTS   1
-#define DISTRHO_PLUGIN_NUM_OUTPUTS  1
+#define DISTRHO_PLUGIN_WANT_MIDI_OUTPUT 1
+#define DISTRHO_PLUGIN_NUM_INPUTS   0
+#define DISTRHO_PLUGIN_NUM_OUTPUTS  0
 #define DISTRHO_PLUGIN_IS_RT_SAFE   1
 
 //#define DISTRHO_PLUGIN_HAS_UI       1

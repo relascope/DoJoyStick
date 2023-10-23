@@ -2,6 +2,8 @@
 <project version="4">
   <component name="VcsDirectoryMappings">
     <mapping directory="" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/DPF" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/DPF/dgl/src/pugl-upstream" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/MidiJoystick" vcs="Git" />
   </component>
 </project>

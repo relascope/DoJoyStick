@@ -5,11 +5,10 @@
 #ifndef DOJOYSTICK_JOYSTICKMIDIMEDIATOR_H
 #define DOJOYSTICK_JOYSTICKMIDIMEDIATOR_H
 
-#include "glue.h"
 #include "joystick-gateway.h"
-#include <jack/ringbuffer.h>
 #include <linux/joystick.h>
 #include <string>
+#include "DPF/distrho/extra/RingBuffer.hpp"
 
 class JoystickMidiMediator {
 public:
@@ -19,7 +18,7 @@ private:
     static void event_handler(JoystickEvent event, void *);
     void setupJoystick();
     JoystickGateway jsEvents;
-    jack_ringbuffer_t *jrb = nullptr;
+    // jack_ringbuffer_t *jrb = nullptr;
     void sendMidiMessage(const char *msg, size_t size);
     static void printMidiMessage(const char *msg, size_t size, bool hex = true);
 };

@@ -6,7 +6,7 @@ set (CMAKE_CXX_STANDARD 17)
 add_subdirectory(DPF)
 
 dpf_add_plugin(DoJoystick
-        TARGETS clap lv2 vst2 vst3
+        TARGETS jack clap lv2 vst2 vst3
         #  UI_TYPE opengl
         FILES_DSP
         src/dojoystick-plugin.cpp
@@ -14,4 +14,4 @@ dpf_add_plugin(DoJoystick
         #      src/dojoystick-ui.cpp
 )
 
-target_include_directories(DoJoystick PUBLIC src)
+target_include_directories(DoJoystick PUBLIC . src)

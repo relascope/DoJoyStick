@@ -4,12 +4,16 @@
 
 
 #include "DistrhoPlugin.hpp"
+#include "JoystickMidiMediator.h"
 
 START_NAMESPACE_DISTRHO
 
     class DoJoystickPlugin : public Plugin {
     public:
-        DoJoystickPlugin() : Plugin(kParameterCount, 0, 0), gain(1.0) {}
+        DoJoystickPlugin() : Plugin(kParameterCount, 0, 0), gain(1.0) {
+//            JoystickMidiMediator joystick_midi("/dev/input/js0");
+//            joystick_midi.run_main_loop();
+        }
 
     protected:
 
@@ -63,13 +67,10 @@ START_NAMESPACE_DISTRHO
             }
         }
 
-        void run(const float **inputs, float **outputs, uint32_t frames) override {
-            const float *const in = inputs[0];
-            float *const out = outputs[0];
-
-            for (uint32_t i = 0; i < frames; i++) {
-                out[i] = in[i] * gain;
-            }
+        void run(const float**, float** outputs, uint32_t frames) override
+        {
+            MidiEvent event;
+            //writeMidiEvent(midiEvents[i]);
         }
 
 
