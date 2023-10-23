@@ -83,7 +83,7 @@ void JoystickMidiMediator::event_handler(JoystickEvent event, void *joystickMedi
     }
 }
 
-JoystickMidiMediator::JoystickMidiMediator(const std::string &joystickDeviceName, HeapRingBuffer *buffer) : joystickGateway(joystickDeviceName), buffer(buffer) {
+JoystickMidiMediator::JoystickMidiMediator(const std::string &joystickDeviceName, HeapRingBuffer *buffer) : joystickGateway(joystickDeviceName), buffer(buffer), joystickThread(&JoystickMidiMediator::run_main_loop, this) {
     joystickGateway.setEventHandler(&event_handler, &joystickGateway);
     this->buffer = buffer;
 }

@@ -9,6 +9,7 @@
 #include "joystick-gateway.h"
 #include <linux/joystick.h>
 #include <string>
+#include <thread>
 
 class JoystickMidiMediator {
 public:
@@ -19,6 +20,8 @@ private:
     static void event_handler(JoystickEvent event, void *);
     void setupJoystick();
     JoystickGateway joystickGateway;
+    std::thread joystickThread;
+
     HeapRingBuffer *buffer;
     void sendMidiMessage(const char *msg, size_t size);
     static void printMidiMessage(const char *msg, size_t size, bool hex = true);

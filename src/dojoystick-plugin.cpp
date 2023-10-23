@@ -5,11 +5,13 @@
 
 #include "DistrhoPlugin.hpp"
 #include "JoystickMidiMediator.h"
+#include <thread>
 
 START_NAMESPACE_DISTRHO
 
 class DoJoystickPlugin : public Plugin {
 private:
+    JoystickMidiMediator *joystickMidiMediator;
     HeapRingBuffer heapRingBuffer;
 
 public:
@@ -19,7 +21,9 @@ public:
         // construction, only needed for heap buffers
         heapRingBuffer.createBuffer(8192);
 
-        JoystickMidiMediator joystick_midi("/dev/input/js0", &heapRingBuffer);
+        joystickMidiMediator = new JoystickMidiMediator("/dev/input/js0", &heapRingBuffer);
+
+
         //            joystick_midi.run_main_loop();
 
         // definition
