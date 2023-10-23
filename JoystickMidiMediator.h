@@ -5,20 +5,21 @@
 #ifndef DOJOYSTICK_JOYSTICKMIDIMEDIATOR_H
 #define DOJOYSTICK_JOYSTICKMIDIMEDIATOR_H
 
+#include "DPF/distrho/extra/RingBuffer.hpp"
 #include "joystick-gateway.h"
 #include <linux/joystick.h>
 #include <string>
-#include "DPF/distrho/extra/RingBuffer.hpp"
 
 class JoystickMidiMediator {
 public:
-    explicit JoystickMidiMediator(const std::string &joystickDeviceName);
+    explicit JoystickMidiMediator(const std::string &joystickDeviceName, HeapRingBuffer *buffer);
     void run_main_loop();
+
 private:
     static void event_handler(JoystickEvent event, void *);
     void setupJoystick();
-    JoystickGateway jsEvents;
-    // jack_ringbuffer_t *jrb = nullptr;
+    JoystickGateway joystickGateway;
+    HeapRingBuffer *buffer;
     void sendMidiMessage(const char *msg, size_t size);
     static void printMidiMessage(const char *msg, size_t size, bool hex = true);
 };

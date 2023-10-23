@@ -3,13 +3,13 @@
 //
 
 #include "JoystickMidiMediator.h"
+#include "DPF/distrho/DistrhoDetails.hpp"
 #include "dojoysticklooper.hpp"
 #include "glue.h"
 #include "joystick-gateway.h"
 #include "midijack.h"
 #include <iostream>
 #include <linux/joystick.h>
-
 
 char velocity = 111;
 
@@ -23,18 +23,18 @@ void JoystickMidiMediator::event_handler(JoystickEvent event, void *joystickMedi
     // for the time just hardcode to be a good left foot pedal for x42 Black Pearl drumkit
 
     // axis number 2 not good for velocity change
-//    if (event.getButtonNumber() == 2) {
-//        if (event.getNativeEvent().value < 0) {
-//            velocity = std::max(velocity - 1, 0);
-//        } else if (event.getNativeEvent().value > 0) {
-//            velocity = std::min(velocity + 1, 128);
-//        }
-//
-//        std::cout << "================================================================" << '\n';
-//        std::cout << "velocity: " << velocity << std::endl;
-//
-//        return;
-//    }
+    //    if (event.getButtonNumber() == 2) {
+    //        if (event.getNativeEvent().value < 0) {
+    //            velocity = std::max(velocity - 1, 0);
+    //        } else if (event.getNativeEvent().value > 0) {
+    //            velocity = std::min(velocity + 1, 128);
+    //        }
+    //
+    //        std::cout << "================================================================" << '\n';
+    //        std::cout << "velocity: " << velocity << std::endl;
+    //
+    //        return;
+    //    }
 
 
     switch (event.getButtonNumber()) {
@@ -83,38 +83,48 @@ void JoystickMidiMediator::event_handler(JoystickEvent event, void *joystickMedi
     }
 }
 
-JoystickMidiMediator::JoystickMidiMediator(const std::string &joystickDeviceName) : jsEvents(joystickDeviceName) {
-    jsEvents.setEventHandler(&event_handler, &jsEvents);
-    setup_jack(&jrb, DEFAULT_RB_SIZE);
+JoystickMidiMediator::JoystickMidiMediator(const std::string &joystickDeviceName, HeapRingBuffer *buffer) : joystickGateway(joystickDeviceName), buffer(buffer) {
+    joystickGateway.setEventHandler(&event_handler, &joystickGateway);
+    this->buffer = buffer;
 }
 
 void JoystickMidiMediator::run_main_loop() {
-    jsEvents.js_event_loop();
+    joystickGateway.js_event_loop();
 }
 
 void JoystickMidiMediator::sendMidiMessage(const char *msg, size_t size) {
     if (size == 0) return;
 
+    MidiEvent event = {};
+    event.size = size;
+    for (size_t i = 0; i < size; ++i) {
+        event.data[i] = msg[i];
+    }
+
+    buffer->writeCustomType(event);
+    buffer->commitWrite();
+
     printMidiMessage(msg, size);
     printMidiMessage(msg, size, false);
 
-    struct midi_msg midi;
-    memset(&midi, 0, sizeof(midi));
+    //    struct midi_msg midi;
+    //    memset(&midi, 0, sizeof(midi));
+    //
+    //    for (size_t i = 0; i < size && i < MAX_MIDI_MSG; i++) {
+    //        midi.msg[i] = msg[i];
+    //    }
+    //
+    //    midi.size = size;
 
-    for (size_t i = 0; i < size && i < MAX_MIDI_MSG; i++) {
-        midi.msg[i] = msg[i];
-    }
 
-    midi.size = size;
-
-    if (jack_ringbuffer_write_space(jrb) < sizeof(midi)) {
-        //	  fprintf(stderr, "midi message will not fit in ringbuffer\n");
-        throw "midi message will not fit in ringbuffer\n";
-    }
-
-    if ((jack_ringbuffer_write(jrb, (const char *) (void *) &midi, sizeof(midi))) != sizeof(midi)) {
-        throw "error writing midi to ringbuffer";
-    }
+    //    if (jack_ringbuffer_write_space(jrb) < sizeof(midi)) {
+    //        //	  fprintf(stderr, "midi message will not fit in ringbuffer\n");
+    //        throw "midi message will not fit in ringbuffer\n";
+    //    }
+    //
+    //    if ((jack_ringbuffer_write(jrb, (const char *) (void *) &midi, sizeof(midi))) != sizeof(midi)) {
+    //        throw "error writing midi to ringbuffer";
+    //    }
 }
 void JoystickMidiMediator::printMidiMessage(const char *msg, size_t size, bool hex) {
     std::cout << "======MIDI Event " << (hex ? "HEX" : "DEC");
