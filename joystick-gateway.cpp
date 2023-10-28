@@ -16,20 +16,21 @@ void JoystickGateway::setEventHandler(clickHandler handler, void *data) {
     _handlerData = data;
 }
 
-void JoystickGateway::open_joystick() {
+bool JoystickGateway::open_joystick() {
     char name[128] = "Undefined";
     int buttons;
 
     if ((joy_fd = open(deviceName, O_RDONLY)) < 0) {
         fprintf(stderr, "Unable to open device ");
         perror(deviceName);
-        exit(-1);
+        return false;
     }
 
     ioctl(joy_fd, JSIOCGBUTTONS, &buttons);
     ioctl(joy_fd, JSIOCGNAME(128), name);
 
     printf("Joystick %s with %i buttons\n", name, buttons);
+    return true;
 }
 
 void JoystickGateway::js_event_loop() {

@@ -29,7 +29,7 @@ private:
     void *_handlerData = 0;
     int joy_fd;
 
-    void open_joystick();
+    bool open_joystick();
 };
 
 #endif
