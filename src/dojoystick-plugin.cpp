@@ -7,6 +7,7 @@
 
 #include "DistrhoPlugin.hpp"
 #include "JoystickMidiMediator.h"
+#include "Settings.h"
 #include <thread>
 
 START_NAMESPACE_DISTRHO
@@ -22,18 +23,21 @@ public:
         kParameterCount = 1,
     };
 
+    [[nodiscard]] const DoJoyStick::Settings &getSettings() const {
+        return settings;
+    }
+
 private:
-    JoystickMidiMediator *joystickMidiMediator;
+    std::unique_ptr<DoJoyStick::JoystickMidiMediator> joystickMidiMediator;
     HeapRingBuffer heapRingBuffer;
 
 public:
-    DoJoystickPlugin() : Plugin(static_cast<uint32_t>(Parameters::kParameterCount), 0, 0), velocity(1.0) {
-        // or RingBufferControl<HeapBuffer> class for more control
-
-        // construction, only needed for heap buffers
+    DoJoystickPlugin() : Plugin(static_cast<uint32_t>(Parameters::kParameterCount), 0, 0) {
+        settings.velocity = 111;
+        settings.joyStickDeviceName = "/dev/input/js0";
         heapRingBuffer.createBuffer(8192);
 
-        joystickMidiMediator = new JoystickMidiMediator("/dev/input/js0", &heapRingBuffer);
+        joystickMidiMediator = std::make_unique<DoJoyStick::JoystickMidiMediator>(settings, &heapRingBuffer);
 
 
         //            joystick_midi.run_main_loop();
@@ -92,7 +96,7 @@ protected:
     virtual float getParameterValue(uint32_t index) const override {
         switch (static_cast<Parameters>(index)) {
             case Parameters::kVelocity:
-                return velocity;
+                return settings.velocity;
             default:
                 return 0;
         }
@@ -101,7 +105,7 @@ protected:
     virtual void setParameterValue(uint32_t index, float value) override {
         switch (static_cast<Parameters>(index)) {
             case Parameters::kVelocity:
-                velocity = value;
+                settings.velocity = static_cast<uint8_t>(value);
                 break;
             default:
                 break;
@@ -126,7 +130,7 @@ protected:
     }
 
 private:
-    uint8_t velocity;
+    DoJoyStick::Settings settings;
 
     DISTRHO_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(DoJoystickPlugin);
 };

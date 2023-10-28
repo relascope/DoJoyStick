@@ -6,25 +6,29 @@
 #define DOJOYSTICK_JOYSTICKMIDIMEDIATOR_H
 
 #include "DPF/distrho/extra/RingBuffer.hpp"
+#include "Settings.h"
 #include "joystick-gateway.h"
 #include <linux/joystick.h>
 #include <string>
 #include <thread>
 
-class JoystickMidiMediator {
-public:
-    explicit JoystickMidiMediator(const std::string &joystickDeviceName, HeapRingBuffer *buffer);
-    void run_main_loop();
+namespace DoJoyStick {
 
-private:
-    static void event_handler(JoystickEvent event, void *);
-    void setupJoystick();
-    JoystickGateway joystickGateway;
-    std::thread joystickThread;
+    class JoystickMidiMediator {
+    public:
+        explicit JoystickMidiMediator(const Settings &settings, HeapRingBuffer *buffer);
+        void run_main_loop();
+        virtual ~JoystickMidiMediator();
 
-    HeapRingBuffer *buffer;
-    void sendMidiMessage(const char *msg, size_t size);
-    static void printMidiMessage(const char *msg, size_t size, bool hex = true);
-};
+    private:
+        static void event_handler(JoystickEvent event, void *);
+        void setupJoystick();
+        JoystickGateway joystickGateway;
+        std::thread joystickThread;
 
+        HeapRingBuffer *buffer;
+        void sendMidiMessage(const char *msg, size_t size);
+        static void printMidiMessage(const char *msg, size_t size, bool hex = true);
+    };
+}// namespace DoJoyStick
 #endif//DOJOYSTICK_JOYSTICKMIDIMEDIATOR_H

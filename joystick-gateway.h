@@ -4,32 +4,34 @@
 #include "JoystickEvent.h"
 #include <string>
 
-/**
+namespace DoJoyStick {
+
+    /**
  * @brief The JoystickGateway class
  * Reads Joystick events and propagates through EventHandler
  */
-class JoystickGateway {
-public:
-    explicit JoystickGateway(std::string joyStickDeviceName = "/dev/input/js0");
+    class JoystickGateway {
+    public:
+        explicit JoystickGateway(std::string joyStickDeviceName = "/dev/input/js0");
 
-    typedef void (*clickHandler)(JoystickEvent, void *data);
+        typedef void (*clickHandler)(JoystickEvent, void *data);
 
-    void js_event_loop();
+        void js_event_loop();
 
-    void setEventHandler(clickHandler handler, void *data = 0);
+        void setEventHandler(clickHandler handler, void *data = 0);
 
-    static void jsdiag(js_event js);
+        static void jsdiag(js_event js);
 
-private:
-    // TODO allow to set parameters
-    int holdTime = 700;
-    int dblTime = 250;
-    const char *deviceName;
-    clickHandler _handler = 0;
-    void *_handlerData = 0;
-    int joy_fd;
+    private:
+        // TODO allow to set parameters
+        int holdTime = 700;
+        int dblTime = 250;
+        const char *deviceName;
+        clickHandler _handler = 0;
+        void *_handlerData = 0;
+        int joy_fd;
 
-    bool open_joystick();
-};
-
+        bool open_joystick();
+    };
+}// namespace DoJoyStick
 #endif
