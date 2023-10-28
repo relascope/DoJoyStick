@@ -1,3 +1,5 @@
+#pragma clang diagnostic push
+#pragma ide diagnostic ignored "clion-misra-cpp2008-10-3-2"
 //
 // Created by humer on 22/10/2023.
 //
@@ -9,13 +11,23 @@
 
 START_NAMESPACE_DISTRHO
 
+
+// parameter button -> noteOn, noteOff, autoNoteOff, MIDI CC noteNumber, velocity
+constexpr uint8_t kMaxButtonNumber = 0xFFU;
+
 class DoJoystickPlugin : public Plugin {
+public:
+    enum class Parameters {
+        kVelocity = 0,
+        kParameterCount = 1,
+    };
+
 private:
     JoystickMidiMediator *joystickMidiMediator;
     HeapRingBuffer heapRingBuffer;
 
 public:
-    DoJoystickPlugin() : Plugin(kParameterCount, 0, 0), gain(1.0) {
+    DoJoystickPlugin() : Plugin(static_cast<uint32_t>(Parameters::kParameterCount), 0, 0), velocity(1.0) {
         // or RingBufferControl<HeapBuffer> class for more control
 
         // construction, only needed for heap buffers
@@ -45,50 +57,51 @@ public:
     }
 
 protected:
-    const char *getLabel() const override { return "DoJoystick"; }
+    [[nodiscard]] const char *getLabel() const override { return "DoJoyStick"; }
 
-    const char *getDescription() const override {
-        return "Simple amp plugin.";
+    [[nodiscard]] const char *getDescription() const override {
+        return "Joystick to DoJoy music. UseCase: MidiController (e.g. versatile foot drum)";
     }
 
-    const char *getMaker() const override { return "DoJoy"; }
+    [[nodiscard]] const char *getMaker() const override { return "DoJoy.at"; }
 
-    const char *getLicense() const override { return "AGPL3"; }
+    [[nodiscard]] const char *getLicense() const override { return "AGPL3"; }
 
-    uint32_t getVersion() const override { return d_version(1, 0, 0); }
+    [[nodiscard]] uint32_t getVersion() const override { return d_version(1, 0, 1); }
 
-    int64_t getUniqueId() const override {
-        return d_cconst('D', 'o', 'J', 'T');
+    [[nodiscard]] int64_t getUniqueId() const override {
+        return d_cconst('D', 'J', 'o', 'y');
     }
 
 
     void initParameter(uint32_t index, Parameter &parameter) override {
-        switch (index) {
-            case kGain:
-                parameter.name = "Gain";
-                parameter.symbol = "gain";
-                parameter.ranges.def = 1.0f;
-                parameter.ranges.min = 0.0f;
-                parameter.ranges.max = 2.0f;
+        switch (static_cast<Parameters>(index)) {
+            case Parameters::kVelocity:
+                parameter.name = "velocity";
+                parameter.symbol = "gain";// TODO
+                parameter.hints |= kParameterIsInteger;
+                parameter.ranges.def = 108;
+                parameter.ranges.min = 0;
+                parameter.ranges.max = 127;
                 break;
             default:
                 break;
         }
     }
 
-    float getParameterValue(uint32_t index) const override {
-        switch (index) {
-            case kGain:
-                return gain;
+    virtual float getParameterValue(uint32_t index) const override {
+        switch (static_cast<Parameters>(index)) {
+            case Parameters::kVelocity:
+                return velocity;
             default:
-                return 0.0;
+                return 0;
         }
     }
 
-    void setParameterValue(uint32_t index, float value) override {
-        switch (index) {
-            case kGain:
-                gain = value;
+    virtual void setParameterValue(uint32_t index, float value) override {
+        switch (static_cast<Parameters>(index)) {
+            case Parameters::kVelocity:
+                velocity = value;
                 break;
             default:
                 break;
@@ -113,7 +126,7 @@ protected:
     }
 
 private:
-    float gain;
+    uint8_t velocity;
 
     DISTRHO_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(DoJoystickPlugin);
 };
@@ -121,3 +134,4 @@ private:
 Plugin *createPlugin() { return new DoJoystickPlugin(); }
 
 END_NAMESPACE_DISTRHO
+#pragma clang diagnostic pop
