@@ -47,7 +47,7 @@ namespace DoJoyStick {
         long lastDownTime = 0;
         bool isDouble = false;
 
-        while (true) {
+        while (shouldRun) {
             if (read(joy_fd, &jsEvent, sizeof(struct js_event)) != sizeof(struct js_event)) {
                 perror("Error reading ");
                 exit(-1);
@@ -86,5 +86,21 @@ namespace DoJoyStick {
                 (*_handler)({jsEvent, curPressType}, _handlerData);
             }
         }
+    }
+
+    int JoystickGateway::close_joystick(int fd) {
+        int res;
+        errno = 0;
+        if ((res = close(fd)) == -1) {
+            perror("close joystick");
+            exit(1);
+        }
+        return res;
+    }
+
+
+    JoystickGateway::~JoystickGateway() {
+
+        close_joystick(this->joy_fd);
     }
 }// namespace DoJoyStick

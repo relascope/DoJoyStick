@@ -149,5 +149,7 @@ namespace DoJoyStick {
         }
     }
     JoystickMidiMediator::~JoystickMidiMediator() {
+        joystickGateway.stop();
+        joystickThread.join();
     }
 }// namespace DoJoyStick
