@@ -85,13 +85,12 @@ namespace DoJoyStick {
         }
     }
 
-    JoystickMidiMediator::JoystickMidiMediator(const Settings &settings, HeapRingBuffer *buffer) : joystickGateway(settings.joyStickDeviceName), buffer(buffer), joystickThread(&JoystickMidiMediator::run_main_loop, this) {
-        joystickGateway.setEventHandler(&event_handler, &joystickGateway);
-        this->buffer = buffer;
+    JoystickMidiMediator::JoystickMidiMediator(const Settings &settings) /*joystickGateway(settings.joyStickDeviceName)*/ /*, joystickThread(&JoystickMidiMediator::run_main_loop, this)*/ {
+        //        joystickGateway.setEventHandler(&event_handler, &joystickGateway);
     }
 
     void JoystickMidiMediator::run_main_loop() {
-        joystickGateway.js_event_loop();
+        //        joystickGateway.js_event_loop();
     }
 
     void JoystickMidiMediator::sendMidiMessage(const char *msg, size_t size) {
@@ -102,9 +101,6 @@ namespace DoJoyStick {
         for (size_t i = 0; i < size; ++i) {
             event.data[i] = msg[i];
         }
-
-        buffer->writeCustomType(event);
-        buffer->commitWrite();
 
         printMidiMessage(msg, size);
         printMidiMessage(msg, size, false);
@@ -149,7 +145,7 @@ namespace DoJoyStick {
         }
     }
     JoystickMidiMediator::~JoystickMidiMediator() {
-        joystickGateway.stop();
-        joystickThread.join();
+        //        joystickGateway.stop();
+        //        joystickThread.join();
     }
 }// namespace DoJoyStick

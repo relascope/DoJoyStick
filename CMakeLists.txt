@@ -34,10 +34,8 @@ FetchContent_Declare(
 FetchContent_MakeAvailable(Catch2)
 
 add_executable(tests tests/exampletest.cpp
-        tests/dojoystick-plugin-test.cpp ${TARGET_SRC})
-
-target_include_directories(tests PUBLIC . src ./DPF/distrho)
-
+        tests/quicktest.cpp)
+target_include_directories(tests PUBLIC .)
 
 target_link_libraries(tests PRIVATE Catch2::Catch2WithMain)
 

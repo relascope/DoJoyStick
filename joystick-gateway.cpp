@@ -10,7 +10,7 @@
 namespace DoJoyStick {
 
     JoystickGateway::JoystickGateway(const std::string joyStickDeviceName) : deviceName(joyStickDeviceName.c_str()) {
-        open_joystick();
+        //        open_joystick();
     }
 
     void JoystickGateway::setEventHandler(clickHandler handler, void *data) {

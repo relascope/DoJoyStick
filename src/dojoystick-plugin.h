@@ -11,7 +11,8 @@
 #include <thread>
 // parameter button -> noteOn, noteOff, autoNoteOff, MIDI CC noteNumber, velocity
 constexpr uint8_t kMaxButtonNumber = 0xFFU;
-class DoJoyStickPlugin : public Plugin {
+class DoJoyStickPlugin : public Plugin,
+                         public DoJoyStick::MidiObserver {
 public:
     enum class Parameters {
         kVelocity = 0,
@@ -32,7 +33,8 @@ public:
         settings.joyStickDeviceName = "/dev/input/js0";
         heapRingBuffer.createBuffer(8192);
 
-        joystickMidiMediator = std::make_unique<DoJoyStick::JoystickMidiMediator>(settings, &heapRingBuffer);
+        joystickMidiMediator = std::make_unique<DoJoyStick::JoystickMidiMediator>(settings);
+        //        joystickMidiMediator->addObserver(this);
 
 
         //            joystick_midi.run_main_loop();
@@ -53,6 +55,11 @@ public:
         //                    // do something with "anotherData"
         //                }
         //            }
+    }
+
+    virtual void sendMidiEvent(const MidiEvent &midiEvent) override {
+        heapRingBuffer.writeCustomType(midiEvent);
+        heapRingBuffer.commitWrite();
     }
 
 protected:
