@@ -11,7 +11,7 @@
 #include <thread>
 // parameter button -> noteOn, noteOff, autoNoteOff, MIDI CC noteNumber, velocity
 constexpr uint8_t kMaxButtonNumber = 0xFFU;
-class DoJoystickPlugin : public Plugin {
+class DoJoyStickPlugin : public Plugin {
 public:
     enum class Parameters {
         kVelocity = 0,
@@ -27,7 +27,7 @@ private:
     HeapRingBuffer heapRingBuffer;
 
 public:
-    DoJoystickPlugin() : Plugin(static_cast<uint32_t>(Parameters::kParameterCount), 0, 0) {
+    DoJoyStickPlugin() : Plugin(static_cast<uint32_t>(Parameters::kParameterCount), 0, 0) {
         settings.velocity = 111;
         settings.joyStickDeviceName = "/dev/input/js0";
         heapRingBuffer.createBuffer(8192);
@@ -127,6 +127,6 @@ protected:
 private:
     DoJoyStick::Settings settings;
 
-    DISTRHO_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(DoJoystickPlugin);
+    DISTRHO_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(DoJoyStickPlugin);
 };
 #endif//DOJOYSTICK_SRC_DOJOYSTICK_PLUGIN_CPP_DOJOYSTICK_PLUGIN_H_

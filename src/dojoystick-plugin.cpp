@@ -14,7 +14,7 @@
 START_NAMESPACE_DISTRHO
 
 
-Plugin *createPlugin() { return new DoJoystickPlugin(); }
+Plugin *createPlugin() { return new DoJoyStickPlugin(); }
 
 END_NAMESPACE_DISTRHO
 #pragma clang diagnostic pop
