@@ -85,12 +85,9 @@ namespace DoJoyStick {
         }
     }
 
-    JoystickMidiMediator::JoystickMidiMediator(const Settings &settings) /*joystickGateway(settings.joyStickDeviceName)*/ /*, joystickThread(&JoystickMidiMediator::run_main_loop, this)*/ {
-        //        joystickGateway.setEventHandler(&event_handler, &joystickGateway);
-    }
-
-    void JoystickMidiMediator::run_main_loop() {
-        //        joystickGateway.js_event_loop();
+    JoystickMidiMediator::JoystickMidiMediator(const Settings &settings) : DISTRHO::Thread("DoJoyStick-Joystick-Thread"),
+                                                                           joystickGateway(settings.joyStickDeviceName) /*, joystickThread(&JoystickMidiMediator::run_main_loop, this)*/ {
+        joystickGateway.setEventHandler(&event_handler, &joystickGateway);
     }
 
     void JoystickMidiMediator::sendMidiMessage(const char *msg, size_t size) {

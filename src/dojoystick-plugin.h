@@ -34,6 +34,9 @@ public:
         heapRingBuffer.createBuffer(8192);
 
         joystickMidiMediator = std::make_unique<DoJoyStick::JoystickMidiMediator>(settings);
+        //        joystickMidiMediator->run();
+
+
         //        joystickMidiMediator->addObserver(this);
 
 
@@ -57,7 +60,14 @@ public:
         //            }
     }
 
-    virtual void sendMidiEvent(const MidiEvent &midiEvent) override {
+    ~DoJoyStickPlugin() override {
+        if (joystickMidiMediator->isThreadRunning()) {
+            joystickMidiMediator->signalThreadShouldExit();
+            joystickMidiMediator->stopThread(0);
+        }
+    }
+
+    virtual void onMidiEvent(const MidiEvent &midiEvent) override {
         heapRingBuffer.writeCustomType(midiEvent);
         heapRingBuffer.commitWrite();
     }

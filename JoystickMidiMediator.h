@@ -16,17 +16,42 @@
 #include <thread>
 #include <vector>
 
+#include "DPF/distrho/extra/Thread.hpp"
+
 namespace DoJoyStick {
-    class MidiObserver {
-    public:
-        virtual void sendMidiEvent(const MidiEvent &midiEvent) = 0;
+
+    class DoJoyStickThread : public DISTRHO::Thread {
     };
 
-    class JoystickMidiMediator {
+
+    class MidiObserver {
+    public:
+        virtual void onMidiEvent(const MidiEvent &midiEvent) = 0;
+    };
+    //
+    //    class ThreadProvider {
+    //    public:
+    //        virtual void startThread(std::function<void(void)>) = 0;
+    //        virtual void stopThread();
+    //    };
+
+    /** JoyStickMidiMediator
+     * is the connection from the joystick to midi
+     * to use, you have to provide the Settings and a
+     * possibility to run a thread on the desired function.
+     * The request for a ThreadProvider (over using std::thread)
+     * was made because DISTRHO DPF Plugin framework
+     * somehow hast problems, when lv2 manifests are created.
+     */
+    class JoystickMidiMediator : public DISTRHO::Thread {
     public:
         explicit JoystickMidiMediator(const Settings &settings);
-        void run_main_loop();
-        virtual ~JoystickMidiMediator();
+        ~JoystickMidiMediator() override;
+
+        // from DISTRHO::Thread
+        void run() override {
+            joystickGateway.js_event_loop();
+        }
 
         void addObserver(MidiObserver *const observer) { observers.push_back(observer); };
         void removeObserver(MidiObserver *const observer) {
@@ -36,7 +61,7 @@ namespace DoJoyStick {
 
         void notifyObservers(const MidiEvent &midiEvent) {
             for (auto observer: observers) {
-                observer->sendMidiEvent(midiEvent);
+                observer->onMidiEvent(midiEvent);
             }
         }
 
