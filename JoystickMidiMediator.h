@@ -44,8 +44,8 @@ namespace DoJoyStick {
         static void
         event_handler(JoystickEvent event, void *);
         void setupJoystick();
-        //        JoystickGateway joystickGateway;
-        //        std::thread joystickThread;
+        JoystickGateway joystickGateway;
+        std::thread joystickThread;
 
         std::vector<MidiObserver *> observers;
         void sendMidiMessage(const char *msg, size_t size);

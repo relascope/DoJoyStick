@@ -10,7 +10,7 @@
 namespace DoJoyStick {
 
     JoystickGateway::JoystickGateway(const std::string joyStickDeviceName) : deviceName(joyStickDeviceName.c_str()) {
-        //        open_joystick();
+        open_joystick();
     }
 
     void JoystickGateway::setEventHandler(clickHandler handler, void *data) {
@@ -88,10 +88,12 @@ namespace DoJoyStick {
         }
     }
 
-    int JoystickGateway::close_joystick(int fd) {
+    int JoystickGateway::close_joystick() {
+        if (joy_fd == -1)
+            return -1;
         int res;
         errno = 0;
-        if ((res = close(fd)) == -1) {
+        if ((res = close(joy_fd)) == -1) {
             perror("close joystick");
             exit(1);
         }
@@ -100,7 +102,6 @@ namespace DoJoyStick {
 
 
     JoystickGateway::~JoystickGateway() {
-
-        close_joystick(this->joy_fd);
+        close_joystick();
     }
 }// namespace DoJoyStick

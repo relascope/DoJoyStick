@@ -33,11 +33,11 @@ namespace DoJoyStick {
         const char *deviceName;
         clickHandler _handler = 0;
         void *_handlerData = 0;
-        int joy_fd;
+        int joy_fd = -1;
         std::atomic<bool> shouldRun = true;
 
         bool open_joystick();
-        int close_joystick(int fd);
+        int close_joystick();
     };
 }// namespace DoJoyStick
 #endif
