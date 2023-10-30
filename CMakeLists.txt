@@ -34,10 +34,11 @@ FetchContent_Declare(
 FetchContent_MakeAvailable(Catch2)
 
 add_executable(tests tests/exampletest.cpp
-        tests/quicktest.cpp)
+        tests/quicktest.cpp ${TARGET_SRC})
 target_include_directories(tests PUBLIC .)
 
 target_link_libraries(tests PRIVATE Catch2::Catch2WithMain)
+target_link_libraries(tests PUBLIC jack)
 
 list(APPEND CMAKE_MODULE_PATH ${catch2_SOURCE_DIR}/extras)
 include(CTest)

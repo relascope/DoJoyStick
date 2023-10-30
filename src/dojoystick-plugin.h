@@ -8,6 +8,7 @@
 #include "DistrhoPlugin.hpp"
 #include "JoystickMidiMediator.h"
 #include "Settings.h"
+#include <iostream>
 #include <thread>
 // parameter button -> noteOn, noteOff, autoNoteOff, MIDI CC noteNumber, velocity
 constexpr uint8_t kMaxButtonNumber = 0xFFU;
@@ -34,33 +35,13 @@ public:
         heapRingBuffer.createBuffer(8192);
 
         joystickMidiMediator = std::make_unique<DoJoyStick::JoystickMidiMediator>(settings);
-        //        joystickMidiMediator->run();
+        joystickMidiMediator->addObserver(this);
 
-
-        //        joystickMidiMediator->addObserver(this);
-
-
-        //            joystick_midi.run_main_loop();
-
-        // definition
-
-        //            // writing data
-        //            myHeapBuffer.writeUInt(size);
-        //            myHeapBuffer.writeCustomData(someOtherData, size);
-        //            myHeapBuffer.commitWrite();
-        //
-        //            // reading data
-        //            if (myHeapBuffer.isDataAvailableForReading())
-        //            {
-        //                uint32_t size;
-        //                if (myHeapBuffer.readUInt(size) && readCustomData(&anotherData, size))
-        //                {
-        //                    // do something with "anotherData"
-        //                }
-        //            }
+        joystickMidiMediator->startThread(true);
     }
 
     ~DoJoyStickPlugin() override {
+        joystickMidiMediator->removeObserver(this);
         if (joystickMidiMediator->isThreadRunning()) {
             joystickMidiMediator->signalThreadShouldExit();
             joystickMidiMediator->stopThread(0);
@@ -68,6 +49,8 @@ public:
     }
 
     virtual void onMidiEvent(const MidiEvent &midiEvent) override {
+        std::cout << "MidiEvent in \n"
+                  << std::flush;
         heapRingBuffer.writeCustomType(midiEvent);
         heapRingBuffer.commitWrite();
     }

@@ -31,7 +31,7 @@ namespace DoJoyStick {
         ioctl(joy_fd, JSIOCGBUTTONS, &buttons);
         ioctl(joy_fd, JSIOCGNAME(128), name);
 
-        printf("Joystick %s with %i buttons\n", name, buttons);
+        //        printf("Joystick %s with %i buttons\n", name, buttons);
         return true;
     }
 
@@ -39,8 +39,8 @@ namespace DoJoyStick {
         struct js_event jsEvent {};
         memset(&jsEvent, 0, sizeof(js_event));
 
-        std::cout << "Starting main Joystick query loop. Ctrl-C to exit.\n"
-                  << "\n";
+        //        std::cout << "Starting main Joystick query loop. Ctrl-C to exit.\n"
+        //                  << "\n";
 
         long lastTime = 0;
         bool lastDown = false;

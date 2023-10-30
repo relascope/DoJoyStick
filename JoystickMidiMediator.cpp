@@ -16,8 +16,9 @@ namespace DoJoyStick {
     char velocity = 111;
 
     void JoystickMidiMediator::event_handler(JoystickEvent event, void *joystickMediator) {
-        std::cout << "===============EVENT===========" << std::endl;
-        event.print();
+        std::cout << "===============EVENT===========BUTTON " << event.getButtonNumber() << std::endl
+                  << std::flush;
+        //        event.print();
         JoystickMidiMediator *_this = (static_cast<JoystickMidiMediator *>(joystickMediator));
 
         // Button #4,5,6,7 are A,B,C,D on Joystick Microsoft Microsoft SideWinder Precision Pro
@@ -38,9 +39,9 @@ namespace DoJoyStick {
         //        return;
         //    }
 
+        char msg[3];
 
         switch (event.getButtonNumber()) {
-            char msg[3];
             case 4:
                 msg[0] = event.isButtonDown() == 1 ? 0x90 : 0x80;
                 msg[2] = velocity;
@@ -71,11 +72,11 @@ namespace DoJoyStick {
                 _this->sendMidiMessage(msg, sizeof(msg));
                 break;
             case 8:
-                msg[0] = event.isButtonDown() == 1 ? 0x90 : 0x80;
-                msg[2] = velocity;
-                msg[1] = 0x24;//C2 (36) hydrogen GM Rock Kit groovy Base//
-                _this->sendMidiMessage(msg, sizeof(msg));
+                //                msg[2] = velocity;
+                //                msg[1] = 0x24;//C2 (36) hydrogen GM Rock Kit groovy Base//
+                //                _this->sendMidiMessage(msg, sizeof(msg));
 
+                msg[0] = event.isButtonDown() == 1 ? 0x90 : 0x80;
                 msg[1] = 0x29;// F2 41 Floor Tom Ctr.
                 msg[2] = (velocity - 42) % 128;
                 _this->sendMidiMessage(msg, sizeof(msg));
@@ -87,11 +88,20 @@ namespace DoJoyStick {
 
     JoystickMidiMediator::JoystickMidiMediator(const Settings &settings) : DISTRHO::Thread("DoJoyStick-Joystick-Thread"),
                                                                            joystickGateway(settings.joyStickDeviceName) /*, joystickThread(&JoystickMidiMediator::run_main_loop, this)*/ {
-        joystickGateway.setEventHandler(&event_handler, &joystickGateway);
+        joystickGateway.setEventHandler(&event_handler, this);
+
+        std::cout << "JoyStickMidiMediator create! \n"
+                  << std::flush;
     }
 
     void JoystickMidiMediator::sendMidiMessage(const char *msg, size_t size) {
-        if (size == 0) return;
+        std::cout << "send... notify??\n"
+                  << std::flush;
+        if (size == 0) {
+            std::cout << "cannot send with ZERO size\n"
+                      << std::flush;
+            return;
+        }
 
         MidiEvent event = {};
         event.size = size;
@@ -99,8 +109,10 @@ namespace DoJoyStick {
             event.data[i] = msg[i];
         }
 
-        printMidiMessage(msg, size);
-        printMidiMessage(msg, size, false);
+        notifyObservers(event);
+
+        //        printMidiMessage(msg, size);
+        //        printMidiMessage(msg, size, false);
 
         //    struct midi_msg midi;
         //    memset(&midi, 0, sizeof(midi));
@@ -122,26 +134,33 @@ namespace DoJoyStick {
         //    }
     }
     void JoystickMidiMediator::printMidiMessage(const char *msg, size_t size, bool hex) {
-        std::cout << "======MIDI Event " << (hex ? "HEX" : "DEC");
-        std::cout << "===========================================================" << '\n';
-
-        if (hex) {
-            printf("%x\n", msg);
-        } else {
-            printf("%d\n", msg);
-        }
-
-        for (size_t i = 0; i < size; i++) {
-            std::cout << "pos" << i << ":";
-            if (hex) {
-                std::cout << std::hex << static_cast<int>(msg[i]);
-            } else {
-                std::cout << static_cast<int>(msg[i]);
-            }
-            std::cout << '\n';
-        }
+        //        std::cout << "======MIDI Event " << (hex ? "HEX" : "DEC");
+        //        std::cout << "===========================================================" << '\n';
+        //
+        //        if (hex) {
+        //            printf("%x\n", msg);
+        //        } else {
+        //            printf("%d\n", msg);
+        //        }
+        //
+        //        for (size_t i = 0; i < size; i++) {
+        //            std::cout << "pos" << i << ":";
+        //            if (hex) {
+        //                std::cout << std::hex << static_cast<int>(msg[i]);
+        //            } else {
+        //                std::cout << static_cast<int>(msg[i]);
+        //            }
+        //            std::cout << '\n';
+        //        }
     }
     JoystickMidiMediator::~JoystickMidiMediator() {
+
+        joystickGateway.stop();
+
+        if (this->isThreadRunning()) {
+            this->signalThreadShouldExit();
+            this->stopThread(0);
+        }
         //        joystickGateway.stop();
         //        joystickThread.join();
     }

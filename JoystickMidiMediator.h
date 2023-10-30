@@ -7,16 +7,16 @@
 
 #include "DPF/distrho/DistrhoDetails.hpp"
 #include "DPF/distrho/extra/RingBuffer.hpp"
+#include "DPF/distrho/extra/Thread.hpp"
 #include "Settings.h"
 #include "joystick-gateway.h"
 #include <algorithm>
+#include <iostream>
 #include <linux/joystick.h>
 #include <memory>
 #include <string>
 #include <thread>
 #include <vector>
-
-#include "DPF/distrho/extra/Thread.hpp"
 
 namespace DoJoyStick {
 
@@ -48,18 +48,29 @@ namespace DoJoyStick {
         explicit JoystickMidiMediator(const Settings &settings);
         ~JoystickMidiMediator() override;
 
+        void addObserver(MidiObserver *const observer) {
+            std::cout << "observer added...\n"
+                      << std::flush;
+            observers.push_back(observer);
+            std::cout << "obserers size: " << observers.size() << "\n"
+                      << std::flush;
+        };
+        void removeObserver(MidiObserver *const observer) {
+            std::cout << "observer removed \n"
+                      << std::flush;
+            auto predicate = [&observer](const MidiObserver *elem) { return elem == observer; };
+            observers.erase(std::remove_if(observers.begin(), observers.end(), predicate), observers.end());
+        };
+
+    protected:
         // from DISTRHO::Thread
         void run() override {
             joystickGateway.js_event_loop();
         }
 
-        void addObserver(MidiObserver *const observer) { observers.push_back(observer); };
-        void removeObserver(MidiObserver *const observer) {
-            auto predicate = [&observer](const MidiObserver *elem) { return elem == observer; };
-            observers.erase(std::remove_if(observers.begin(), observers.end(), predicate), observers.end());
-        };
-
         void notifyObservers(const MidiEvent &midiEvent) {
+            std::cout << "NOTIFY... " << observers.size() << "\n"
+                      << std::flush;
             for (auto observer: observers) {
                 observer->onMidiEvent(midiEvent);
             }
