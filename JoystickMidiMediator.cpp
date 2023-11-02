@@ -19,7 +19,7 @@ namespace DoJoyStick {
         std::cout << "===============EVENT===========BUTTON " << event.getButtonNumber() << std::endl
                   << std::flush;
         //        event.print();
-        JoystickMidiMediator *_this = (static_cast<JoystickMidiMediator *>(joystickMediator));
+        JoystickMidiMediator *_this = (reinterpret_cast<JoystickMidiMediator *>(joystickMediator));
 
         // Button #4,5,6,7 are A,B,C,D on Joystick Microsoft Microsoft SideWinder Precision Pro
         // Button "ArrowUp" is 8
